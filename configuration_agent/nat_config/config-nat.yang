@@ -1,0 +1,37 @@
+module config-nat { 
+	namespace "http://netgroup.ipv6.polito.it/vnf"; 
+	prefix "nat"; 
+	import ietf-inet-types { 
+		prefix inet; 
+	} 
+	description "Nat configuration"; 
+	container interfaces { 
+		list ifEntry { 
+			key "name"; 
+			leaf name { 
+				type string; 
+			} 
+			leaf configurationType { 
+				type enumeration { 
+					enum dhcp; 
+					enum static; 
+					enum not_defined;
+				} 
+			} 
+			leaf type { 
+				type enumeration { 
+					enum lan; 
+					enum wan;
+					enum config;
+					enum not_defined;
+				} 
+			}
+			leaf address { 
+				type inet:ip-address; 
+			}
+			leaf default_gw { 
+				type string; 
+			}
+		} 
+	} 
+}

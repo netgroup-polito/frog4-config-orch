@@ -1,0 +1,5 @@
+*.pyc
+double-decker/
+.project
+.pydevproject
+.settings/

@@ -1,0 +1,20 @@
+{
+	"config-nat:interfaces": {
+		"ifEntry": [
+			{
+				"name": "ens3",
+				"configurationType": "dhcp",
+				"type": "wan",
+				"address": "10.0.0.1",
+				"default_gw": ""
+			},
+			{
+				"name": "ens9",
+				"address": "192.168.1.1",
+				"configurationType": "static",
+				"type": "lan",
+				"default_gw": ""
+			}
+		]
+	}
+}
