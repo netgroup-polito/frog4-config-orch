@@ -18,14 +18,20 @@ $ sudo sudo pyp3 install netifaces
 $ sudo sudo pyp3 install xmltodict
 $ sudo pip3 install --upgrade python-iptables
 $ sudo pip3 install netaddr
-$ sudo pyp3 install iptools
+$ sudo pip3 install iptools
 ```
 
 - Double Decker
 
-```sh
-$ git clone http://gitlab.testbed.se/monitoring-and-measurements/double-decker.git
-$ cd double-decker/python
+```
+$ pip3 install PyNaCl
+$ pip3 install pyzmq
+$ pip3 install tornado
+$ pip3 install cffi
+$ pip3 install urwid
+
+$ git clone https://github.com/Acreo/DoubleDecker-py.git
+$ cd DoubleDecker-py
 $ sudo python3 setup.py install
 ```
 
