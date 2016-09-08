@@ -89,7 +89,7 @@ class ConfigurationServer(clientSafe.ClientSafe):
             self.started_vnfs_by_id[vnf.id] = vnf
         elif topic == 'public.default_configuration':
             vnf = self.started_vnfs_by_mac_address[src]
-            configuration_json = json.loads(request.stream.read().decode())
+            configuration_json = #json.loads(request.stream.read().decode())
             self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
         else:
             # Configuration publication
