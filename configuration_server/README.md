@@ -18,7 +18,7 @@ $ sudo pip3 install gunicorn
 - Double Decker
 
 ```sh
-$ git clone http://gitlab.testbed.se/monitoring-and-measurements/double-decker.git
+$ git clone https://github.com/Acreo/DoubleDecker-py.git
 $ cd double-decker/python
 $ sudo python3 setup.py install
 ```
