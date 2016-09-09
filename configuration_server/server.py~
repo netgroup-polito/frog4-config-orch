@@ -9,6 +9,7 @@ Created on Dec 30, 2015
 from doubledecker import clientSafe
 import constants
 from vnf_model import VNF
+from my_db import get_default_configuration
 
 from threading import Thread
 import sys
@@ -49,9 +50,11 @@ class ConfigurationServer(clientSafe.ClientSafe):
                           keyfile= constants.keyfile)
     
     def subscribe_for_tenant_association_phase(self):
+        logging.debug('trying to subscribe')
         self.subscribe('tenant_association', 'noscope')
+        logging.debug('subscribed to: tenant_association')
 
-    def subscribe_for_tenant_association_phase(self):
+    def subscribe_for_default_association_phase(self):
         self.subscribe('default_configuration', 'noscope')
         
     def subscribe_vnf_configuration(self):
@@ -88,8 +91,9 @@ class ConfigurationServer(clientSafe.ClientSafe):
             self.started_vnfs_by_mac_address[vnf.mac_address] = vnf
             self.started_vnfs_by_id[vnf.id] = vnf
         elif topic == 'public.default_configuration':
+            logging.debug('default configuration request received')
             vnf = self.started_vnfs_by_mac_address[src]
-            configuration_json = #json.loads(request.stream.read().decode())
+            configuration_json = get_default_configuration(vnf.id)
             self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
         else:
             # Configuration publication
@@ -103,6 +107,8 @@ class ConfigurationServer(clientSafe.ClientSafe):
         logging.debug('registred')
         # Subscribe to the tenant association phase
         self.subscribe_for_tenant_association_phase()
+        # Subscribe to the default configuration phase
+        self.subscribe_for_default_configuration_phase()
         # Subscribe to the VNF configuration
         self.subscribe_vnf_configuration()
         
@@ -152,7 +158,6 @@ class ConfigurationServer(clientSafe.ClientSafe):
         configuration_json = json.loads(request.stream.read().decode())
         #self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
         self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
-
 
     def on_error():
         pass

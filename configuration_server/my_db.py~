@@ -13,7 +13,7 @@ def dhcp_config():
 	data = json.dumps(json.load(fp))
 	logging.debug(data)
 	return data
-def nat_config():
+def nat_config(): pass
 	fp = open("../configuration_agent/nat_config/default_configuration.json")
 	data = json.dumps(json.load(fp))
 	logging.debug(data)

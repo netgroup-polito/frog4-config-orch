@@ -12,7 +12,7 @@ tenant_name = 'admin'
 username = 'admin'
 password = 'SDN@Edge_Polito'
 
-keyfile = '/etc/doubledeker/public-keys.json'
+keyfile = '/etc/doubledecker/public-keys.json'
 
 #parametri statici aggiunti da get_detailed_info di vnf_model
 tenant_id = '123'

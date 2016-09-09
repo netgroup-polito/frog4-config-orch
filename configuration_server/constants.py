@@ -2,7 +2,7 @@
 Created on Dec 29, 2015
 @author: fabiomignini
 '''
-dealer = 'tcp://10.0.0.2:5555'
+dealer = 'tcp://localhost:5555'
 openstack_ip = 'controller.ipv6.polito.it'
 nova_port = '8774'
 keystone_port = '35357'
