@@ -65,7 +65,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         while True:
             # Export the status every 15 seconds
             time.sleep(15)
-            #self.publish_status()
+            self.publish_status()
             logging.debug('publish status')
         thread.join()
 
@@ -79,11 +79,11 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         self.subscribe('/'+self.vnf.type+'/'+self.vnf_name, 'noscope')
         
     def publish_status(self):
-        self.publish_public(self.vnf.type, self.vnf.get_json_instance())
+        self.publish_public('public.status_exportation', self.vnf.get_json_instance())
         
     def configuration(self):
         self.configuration_subscription()
-        #self.publish_status()
+        self.publish_status()
         logging.debug('publish status')
         
     def config(self, name, dealerURL, customer):
@@ -134,7 +134,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             # Configure VNF
             self.vnf.set_status(json.loads(msg))
             # Export again the status
-            #self.publish_status()
+            self.publish_status()
         else:
             logging.debug('on_data')
             logging.debug(msg)

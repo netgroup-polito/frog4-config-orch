@@ -62,6 +62,10 @@ class ConfigurationServer(clientSafe.ClientSafe):
         self.subscribe('firewall', 'noscope')
         self.subscribe('dhcp', 'noscope')
         
+    def subscribe_status_exportation(self):
+        self.subscribe('status_exportation', 'noscope')
+        logging.debug('subscribed to: status exportation')
+
     def config(self, name, dealerURL, customer):
         super().config(name, dealerURL, customer)
 
@@ -95,10 +99,10 @@ class ConfigurationServer(clientSafe.ClientSafe):
             vnf = self.started_vnfs_by_mac_address[src]
             configuration_json = get_default_configuration(vnf.id)
             self.sendmsg(vnf.mac_address, configuration_json)
-        else:
+        elif topic == 'public.status_exportation':
             # Configuration publication
             self.started_vnfs_by_mac_address[src].status = msg
-            logging.debug("Configuration json: "+self.started_vnfs_by_mac_address[src].status+' of vm: '+self.started_vnfs_by_mac_address[src].name)
+            logging.debug("Configuration json status: "+self.started_vnfs_by_mac_address[src].status+' of vm: '+self.started_vnfs_by_mac_address[src].name)
         
     def on_reg(self):
         '''
@@ -111,6 +115,8 @@ class ConfigurationServer(clientSafe.ClientSafe):
         self.subscribe_for_default_configuration_phase()
         # Subscribe to the VNF configuration
         self.subscribe_vnf_configuration()
+        #Subscribe to status exportation
+        self.subscribe_status_exportation()
         
     def unsubscribe(self):
         super().unsubscribe()

@@ -48,7 +48,7 @@ RUN apt-get -y install iputils-ping
 RUN chmod +x start.sh
 CMD ./start.sh
 
-
+ENV TERM xterm
 WORKDIR /generic-nfv-configuration-and-management
 RUN chmod +x ./start_nat_agent.sh
 RUN echo "configuration_interface='eth0'" > ./configuration_agent/nat_config/constants.py

@@ -8,7 +8,7 @@ RUN apt-get install -y git
 RUN apt-get install -y net-tools
 RUN apt-get install -y sudo
 RUN git clone https://github.com/pyca/pynacl.git
-RUN cd pynacl && ls && python3 setup.py install
+RUN cd pynacl && python3 setup.py install
 RUN pip3 install aiozmq  
 RUN pip3 install zmq
 RUN pip3 install pyang
