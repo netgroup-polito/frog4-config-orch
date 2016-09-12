@@ -54,7 +54,7 @@ class ConfigurationServer(clientSafe.ClientSafe):
         self.subscribe('tenant_association', 'noscope')
         logging.debug('subscribed to: tenant_association')
 
-    def subscribe_for_default_association_phase(self):
+    def subscribe_for_default_configuration_phase(self):
         self.subscribe('default_configuration', 'noscope')
         
     def subscribe_vnf_configuration(self):

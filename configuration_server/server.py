@@ -94,7 +94,7 @@ class ConfigurationServer(clientSafe.ClientSafe):
             logging.debug('default configuration request received')
             vnf = self.started_vnfs_by_mac_address[src]
             configuration_json = get_default_configuration(vnf.id)
-            self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+            self.sendmsg(vnf.mac_address, configuration_json)
         else:
             # Configuration publication
             self.started_vnfs_by_mac_address[src].status = msg

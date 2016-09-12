@@ -36,6 +36,8 @@ ADD b-keys.json /etc/doubledecker/b-keys.json
 ADD public-keys.json /etc/doubledecker/public-keys.json
 
 WORKDIR / 
+RUN apt-get install -y nano
+RUN apt-get install -y vim
 ADD sysctl.conf /etc/sysctl.conf
 ADD ./start.sh start.sh
 
@@ -50,7 +52,5 @@ CMD ./start.sh
 WORKDIR /generic-nfv-configuration-and-management
 RUN chmod +x ./start_nat_agent.sh
 RUN echo "configuration_interface='eth0'" > ./configuration_agent/nat_config/constants.py
-RUN echo "# Configuration Agent - configuration file "\
-   "dealer = 'tcp://10.0.0.1:5555' "\
-   "keyfile = '/etc/doubledecker/a-keys.json' " > ./configuration_agent/constants.py
+RUN echo "# Configuration Agent - configuration file \ndealer = 'tcp://10.0.0.2:5555' \nkeyfile = '/etc/doubledecker/a-keys.json' " > ./configuration_agent/constants.py
 CMD ./start_nat_agent.sh

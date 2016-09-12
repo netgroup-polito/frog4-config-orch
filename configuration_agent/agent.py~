@@ -25,7 +25,8 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         self.vnf = vnf
 
         #  Tenant association phase
-        datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+	print(time)
         self.phase = "TenantAssociation"
         self.initial_registration()
 
@@ -110,7 +111,8 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             msg = msg.decode()
             logging.debug('configuring json: '+msg)
             # Validate json
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+	    print(time)
 
             exit_code, output = utils.validate_json(msg, self.vnf.yang_model)
             if exit_code is not None:

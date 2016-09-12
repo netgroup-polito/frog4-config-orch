@@ -9,7 +9,7 @@
 				"default_gw": ""
 			},
 			{
-				"name": "eth0",
+				"name": "docker0",
 				"address": "192.168.1.1",
 				"configurationType": "static",
 				"type": "lan",
