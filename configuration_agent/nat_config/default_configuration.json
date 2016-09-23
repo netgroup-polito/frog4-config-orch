@@ -2,14 +2,14 @@
 	"config-nat:interfaces": {
 		"ifEntry": [
 			{
-				"name": "eth0",
-				"configurationType": "dhcp",
+				"name": "eth1",
+				"configurationType": "static",
 				"type": "wan",
-				"address": "10.0.0.1",
-				"default_gw": ""
+				"address": "12.0.0.2",
+				"default_gw": "12.0.0.1"
 			},
 			{
-				"name": "docker0",
+				"name": "eth2",
 				"address": "192.168.1.1",
 				"configurationType": "static",
 				"type": "lan",

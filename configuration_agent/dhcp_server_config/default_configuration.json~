@@ -23,8 +23,7 @@
 			"name": "eth1",
 			"address": "192.168.0.4",
 			"configurationType": "static",
-			"type": "dhcp",
-			"default_gw": "192.168.0.1"
+			"type": "dhcp"
 		}]
 	}
 

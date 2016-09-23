@@ -1,14 +1,30 @@
 FROM      ubuntu
 MAINTAINER Politecnico di Torino
 
-RUN apt-get update && apt-get install -y iptables
+#########################################################################
+#									#
+#			VNF feature					#
+#									#
+#########################################################################
 
-RUN apt-get install -y python3-setuptools python3-pip libffi-dev
-RUN apt-get install -y git
-RUN apt-get install -y net-tools
-RUN apt-get install -y sudo
+RUN apt-get update && apt-get install -y iptables
+ADD sysctl.conf /etc/sysctl.conf
+
+#########################################################################
+#									#
+#			Configuration Agent				#
+#									#
+#########################################################################
+ENV TERM xterm
+RUN apt-get install -y htop net-tools nano vim iputils-ping #Tools for debug and management, xterm variable required in order to run nano
+
+RUN apt-get install -y python3-setuptools python3-pip libffi-dev git sudo
+
 RUN git clone https://github.com/pyca/pynacl.git
-RUN cd pynacl && python3 setup.py install
+WORKDIR pynacl
+RUN python3 setup.py install
+
+WORKDIR /
 RUN pip3 install aiozmq  
 RUN pip3 install zmq
 RUN pip3 install pyang
@@ -35,22 +51,22 @@ ADD a-keys.json /etc/doubledecker/a-keys.json
 ADD b-keys.json /etc/doubledecker/b-keys.json
 ADD public-keys.json /etc/doubledecker/public-keys.json
 
-WORKDIR / 
-RUN apt-get install -y nano
-RUN apt-get install -y vim
-ADD sysctl.conf /etc/sysctl.conf
-ADD ./start.sh start.sh
-
+WORKDIR /
 RUN git clone https://github.com/netgroup-polito/generic-nfv-configuration-and-management.git
 
-RUN apt-get -y install iputils-ping
-
-RUN chmod +x start.sh
-CMD ./start.sh
-
-ENV TERM xterm
 WORKDIR /generic-nfv-configuration-and-management
-RUN chmod +x ./start_nat_agent.sh
 RUN echo "configuration_interface='eth0'" > ./configuration_agent/nat_config/constants.py
 RUN echo "# Configuration Agent - configuration file \ndealer = 'tcp://10.0.0.2:5555' \nkeyfile = '/etc/doubledecker/a-keys.json' " > ./configuration_agent/constants.py
-CMD ./start_nat_agent.sh
+
+
+#########################################################################
+#									#
+#			Script boot					#
+#									#
+#########################################################################
+
+WORKDIR /
+ADD ./start_nat.sh start_nat.sh
+RUN chmod 777 start_nat.sh
+ADD start.sh start.sh
+RUN chmod 777 start.sh
