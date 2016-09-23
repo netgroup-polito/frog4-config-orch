@@ -47,8 +47,8 @@ constants.py # For general variables
 - Start Configuration agent
 
 ```sh
-cd openstack-nfv-configuration-and-management
-sudo ./start_<vnf>_agent_in_screen.sh
+cd generic-nfv-configuration-and-management
+sudo ./start_<vnf>_agent.sh
 ```
 
 
