@@ -9,10 +9,8 @@ $ sudo apt-get install python3-setuptools python3-pip libffi-dev
 $ git clone https://github.com/pyca/pynacl
 $ cd pynacl
 $ sudo python3.4 setup.py install
-$ sudo pip3 install aiozmq	
-$ sudo pip3 install zmq
-$ sudo pip3 install falcon
-$ sudo pip3 install gunicorn
+$ sudo pip3 install aiozmq	zmq falcon gunicorn
+$ sudo pip3 install xmltodict pyang
 ```
 
 - Double Decker
