@@ -34,12 +34,12 @@ constants.py
 - Start broker
 
 ```sh
-ddbroker.py -r tcp://*:5555 br1 -u
+ddbroker -r tcp://*:5555 -k <path_key>/<broker_key_file> -s 1/2/3
 ```
 
 - Start Configuration Server
 
 ```sh
-cd openstack-nfv-configuration-and-management
-sudo ./start_server_in_screen.sh
+cd generic-nfv-configuration-and-management
+sudo ./start_server.sh
 ```
