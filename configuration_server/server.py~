@@ -1,7 +1,8 @@
 '''
 Created on Dec 30, 2015
 
-@author: fabiomignini
+@author: fabiomignini, DavideXX92
+
 '''
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
@@ -10,6 +11,7 @@ from doubledecker import clientSafe
 import constants
 from vnf_model import VNF
 from my_db import get_default_configuration
+from yang_parser import yang_to_json
 
 from threading import Thread
 import sys
@@ -20,7 +22,7 @@ import time
 
 class ConfigurationServer(clientSafe.ClientSafe):
     '''
-    Class that extend the unsafe version of the 
+    Class that extend the safe version of the 
     DD (Double Decker) client, in order to provide 
     a way to configure VNFs.
     '''
@@ -102,7 +104,7 @@ class ConfigurationServer(clientSafe.ClientSafe):
         elif topic == 'public.status_exportation':
             # Configuration publication
             self.started_vnfs_by_mac_address[src].status = msg
-            logging.debug("Configuration json: "+self.started_vnfs_by_mac_address[src].status+' of vm: '+self.started_vnfs_by_mac_address[src].name)
+            logging.debug("Configuration json status: "+self.started_vnfs_by_mac_address[src].status+' of vm: '+self.started_vnfs_by_mac_address[src].name)
         
     def on_reg(self):
         '''
@@ -130,13 +132,73 @@ class ConfigurationServer(clientSafe.ClientSafe):
         logging.debug("stop")
         self.shutdown()    
         sys.exit(0)
+
+    def on_get(self, req, resp):
+        logging.debug('ciao')
+    ################################# 
+    #				    #
+    #    - Rest communication -	    #
+    #				    #   
+    #################################
+    '''
+    There are multiple type of the same kind of request in order to support more orchesrtators
+    '''
+
+    #''' 
+    #When the configuration service receive such a request, it provides the VNF status by ID 
+    #'''
+    #def on_get(self, request, response, image_id):
+        #'''
+        #Method called by the dashboard to retrieve the status of a VNF
+        #'''
+        #if image_id in self.started_vnfs_by_id:
+            #vnf = self.started_vnfs_by_id[image_id]
+        #else:
+            #response.status = falcon.HTTP_404
+            #return
+        #logging.debug(response)
+        #logging.debug(vnf)
+        #logging.debug(vnf.status)
+        #if vnf.status is not None:
+            #response.body = vnf.status
+        #else:
+            #response.status = falcon.HTTP_404
+    
+    #'''
+    #When the configuration service receive such a request, it provides the VNF template (YANG) by VNF type
+    #'''
+    def get_yang(self, request, response, vnf_type):
+        '''
+        Method called by the dashboard to retrieve the YANG of a VNF
+        '''
+        logging.debug('retrieve yang')
+        if vnf_type == "nat_cfg":
+            logging.debug("nat_cfg")
+            yang = yang_to_json("../configuration_agent/nat_config/config-nat.yang")
+        elif vnf_type == "dhcp_cfg":
+            logging.debug("dhcp_cfg")
+            yang = yang_to_json("../configuration_agent/dhcp_server_config/config-dhcp-server.yang")       
+        else:
+            logging.debug('YANG not found for: ' + vnf_type)
+            response.status = falcon.HTTP_404
+            return 
         
-    def on_get(self, request, response, image_id):
+        logging.debug(yang)
+        response.body = yang
+        response.status = falcon.HTTP_200
+        
+    ''' 
+    When the configuration service receive such a request, it provides the VNF status by both MAC and user ID 
+    '''
+    def get_staus_vnf(self, request, response, mac_vnf, user_id):
         '''
         Method called by the dashboard to retrieve the status of a VNF
         '''
-        if image_id in self.started_vnfs_by_id:
-            vnf = self.started_vnfs_by_id[image_id]
+        logging.debug('retrieve status vnf')
+
+        mac = 'a.' + mac_vnf
+        if mac in self.started_vnfs_by_mac_address:
+            vnf = self.started_vnfs_by_mac_address[mac]
         else:
             response.status = falcon.HTTP_404
             return
@@ -147,23 +209,47 @@ class ConfigurationServer(clientSafe.ClientSafe):
             response.body = vnf.status
         else:
             response.status = falcon.HTTP_404
-    
-    def on_put(self, request, response, image_id):
+ 
+    def on_get(self, request, response, mac_vnf=None, user_id=None, vnf_type=None):
+        if vnf_type != None:
+            self.get_yang(request, response, vnf_type)
+        elif mac_vnf != None and user_id != None and vnf_type == None:
+            self.get_staus_vnf(request,response, mac_vnf, user_id)
+
+    #def on_put(self, request, response, image_id):
+        #'''
+        #Method called by the dashboard to configure a VNF
+        #'''
+        #logging.debug('ID VNF: ')
+        #for x in self.started_vnfs_by_id:
+            #logging.debug(x)
+
+        #if image_id in self.started_vnfs_by_id:
+            #vnf = self.started_vnfs_by_id[image_id]
+        #else:
+            #response.status = falcon.HTTP_404
+            #return
+        #configuration_json = json.loads(request.stream.read().decode())
+        #NON DA SCOMMENTARE#self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
+        #self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+
+    def on_put(self, request, response, mac_vnf, user_id):
         '''
         Method called by the dashboard to configure a VNF
         '''
-        logging.debug('ID VNF: ')
-        for x in self.started_vnfs_by_id:
+        logging.debug('MAC VNF: ')
+        for x in self.started_vnfs_by_mac_address:
             logging.debug(x)
 
-        if image_id in self.started_vnfs_by_id:
-            vnf = self.started_vnfs_by_id[image_id]
+        if mac_vnf in self.started_vnfs_by_mac_address:
+            vnf = self.started_vnfs_by_mac_address[mac_vnf]
         else:
             response.status = falcon.HTTP_404
             return
         configuration_json = json.loads(request.stream.read().decode())
-        #self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
+        #NON DA SCOMMENTARE#self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
         self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
 
     def on_error():
         pass
+        
