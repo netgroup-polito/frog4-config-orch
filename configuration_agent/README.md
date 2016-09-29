@@ -9,16 +9,10 @@ $ sudo apt-get install python3-setuptools python3-pip libffi-dev
 $ git clone https://github.com/pyca/pynacl
 $ cd pynacl
 $ sudo python3.4 setup.py install
-$ sudo pip3 install aiozmq	
-$ sudo pip3 install zmq
-$ sudo pip3 install pyang
-$ sudo apt-get install xsltproc
-$ sudo apt-get install jing
-$ sudo sudo pyp3 install netifaces
-$ sudo sudo pyp3 install xmltodict
+$ sudo pip3 install aiozmq zmq pyang
+$ sudo apt-get install xsltproc jing
+$ sudo pip3 install netifaces xmltodict netaddr iptools
 $ sudo pip3 install --upgrade python-iptables
-$ sudo pip3 install netaddr
-$ sudo pip3 install iptools
 ```
 
 - Double Decker
