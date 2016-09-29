@@ -3,7 +3,7 @@
 		"ifEntry": [
 			{
 				"name": "eth1",
-				"configurationType": "dhcp",
+				"configurationType": "static",
 				"type": "wan",
 				"address": "12.0.0.2",
 				"default_gw": "12.0.0.1"

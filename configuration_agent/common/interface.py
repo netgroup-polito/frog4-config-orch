@@ -30,4 +30,8 @@ class Interface(object):
             if self.default_gw is not None:
                 Bash('route add default gw '+self.default_gw+' '+self.name)
         elif self.type != 'config' and self.configuration_type == 'dhcp':
-            Bash('cp /sbin/dhclient /usr/sbin/dhclient && /usr/sbin/dhclient '+self.name+' -v')
+            if self.default_gw is not None:
+                Bash('route del default gw '+self.default_gw)
+            Bash('ifconfig '+self.name+' 0')
+            Bash('if [ ! -e "/usr/sbin/dhclient" ]; then cp /sbin/dhclient /usr/sbin/dhclient done fi')
+            Bash('/usr/sbin/dhclient '+self.name+' -v')

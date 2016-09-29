@@ -4,16 +4,16 @@
 			{
 				"name": "eth1",
 				"configurationType": "static",
-				"type": "wan",
-				"address": "12.0.0.2",
+				"type": "lan",
+				"address": "192.168.1.1",
 				"default_gw": "12.0.0.1"
 			},
 			{
 				"name": "eth2",
-				"address": "192.168.1.1",
+				"address": "12.0.0.2",
 				"configurationType": "static",
-				"type": "lan",
-				"default_gw": ""
+				"type": "wan",
+				"default_gw": "12.0.0.1"
 			}
 		]
 	}
