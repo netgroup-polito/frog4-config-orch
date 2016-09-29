@@ -219,14 +219,14 @@ class Nat(object):
         Bash('iptables --table nat --delete-chain')
         Bash('iptables --flush')
 
-        chain = iptc.Chain(iptc.Table(iptc.Table.NAT), "POSTROUTING")
-        rule = iptc.Rule()
-        rule.out_interface = wan_interface
-        target = iptc.Target(rule, "MASQUERADE")
-        rule.target = target
-        chain.insert_rule(rule)
-        #bash = Bash('iptables -t nat -A POSTROUTING -o '+wan_interface+' -j MASQUERADE')
-        #Bash('service iptables restart')
+        #chain = iptc.Chain(iptc.Table(iptc.Table.NAT), "POSTROUTING")
+        #rule = iptc.Rule()
+        #rule.out_interface = wan_interface
+        #target = iptc.Target(rule, "MASQUERADE")
+        #rule.target = target
+        #chain.insert_rule(rule)
+        bash = Bash('iptables -t nat -A POSTROUTING -o '+wan_interface+' -j MASQUERADE')
+        Bash('service iptables restart')
         
     def base_conf(self):
         Bash('echo "UseDNS no" >> /etc/ssh/sshd_config')
