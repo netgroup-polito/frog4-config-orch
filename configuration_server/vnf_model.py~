@@ -35,7 +35,7 @@ class VNF(object):
             logging.debug("dhcp")
             self.id = constants.id_dhcp
             self.name = constants.vnf_name_dhcp
-        elif self.mac_address == "a.08:00:27:b5:31:6f":#"a.52:54:00:3e:28:86":
+        elif self.mac_address == "a.08:00:27:b5:31:6f":#"a.52:54:00:3e:28:86":#"a.08:00:27:b5:31:6f":
             logging.debug("nat")
             self.id = constants.id_nat
             self.name = constants.vnf_name_nat

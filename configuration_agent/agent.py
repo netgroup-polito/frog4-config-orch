@@ -20,6 +20,7 @@ class ConfigurationAgent(clientSafe.ClientSafe):
     def __init__(self, vnf):
         self.tenant_id = None
         self.vnf_name = None
+        self.publishable = False
         
         self.vnf = vnf
 
@@ -79,7 +80,8 @@ class ConfigurationAgent(clientSafe.ClientSafe):
         self.subscribe('/'+self.vnf.type+'/'+self.vnf_name, 'noscope')
         
     def publish_status(self):
-        self.publish_public('public.status_exportation', self.vnf.get_json_instance())
+        if self.publishable:
+            self.publish_public('public.status_exportation', self.vnf.get_json_instance())
         
     def configuration(self):
         self.configuration_subscription()
@@ -106,22 +108,29 @@ class ConfigurationAgent(clientSafe.ClientSafe):
             self.shutdown()
         elif self.phase == "DefaultConfiguration":
             msg = msg.decode()
-            logging.debug('configuring json: '+msg)
-            # Validate json
-
-            exit_code, output = utils.validate_json(msg, self.vnf.yang_model)
-            if exit_code is not None:
-                raise Exception("Wrong configuration file: "+output)
+            if msg == "":
+                logging.debug("No default configuration")
             else:
-                logging.debug("Good validation!")
-            
-            # Configure VNF
-            self.vnf.set_status(json.loads(msg))
+                logging.debug('configuring json: '+msg)
+                # Validate json
 
+                exit_code, output = utils.validate_json(msg, self.vnf.yang_model)
+                if exit_code is not None:
+                    raise Exception("Wrong configuration file: "+output)
+                else:
+                    logging.debug("Good validation!")
+                    self.publishable = True
+            
+                # Configure VNF
+                self.vnf.set_status(json.loads(msg))
+    
             #Configuration phase start
             self.phase = "Configuration"
             self.configuration()
         elif self.phase == "Configuration":
+            if not self.publishable:
+                self.publishable = True
+
             msg = msg.decode()
             logging.debug('configuring json: '+msg)
             # Validate json
