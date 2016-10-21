@@ -174,10 +174,10 @@ class ConfigurationServer(clientSafe.ClientSafe):
         logging.debug('retrieve yang')
         if vnf_type == "nat_cfg":
             logging.debug("nat_cfg")
-            yang = yang_to_json("../configuration_agent/nat_config/config-nat.yang")
+            yang = yang_to_json("../yang_model_example/config-nat.yang")
         elif vnf_type == "dhcp_cfg":
             logging.debug("dhcp_cfg")
-            yang = yang_to_json("../configuration_agent/dhcp_server_config/config-dhcp-server.yang")       
+            yang = yang_to_json("../yang_model_example/config-dhcp-server.yang")       
         else:
             logging.debug('YANG not found for: ' + vnf_type)
             response.status = falcon.HTTP_404

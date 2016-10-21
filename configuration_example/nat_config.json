@@ -1,0 +1,27 @@
+{
+	"config-nat:interfaces": {
+		"ifEntry": [
+			{
+				"name": "eth2",
+				"configurationType": "dhcp",
+				"type": "wan",
+                "address": "192.168.5.1",
+                "default_gw": ""
+			},
+			{
+				"name": "eth1",
+				"address": "192.168.0.1",
+				"configurationType": "static",
+				"type": "lan",
+				"default_gw": ""
+			},
+			{
+				"name": "eth0",
+				"address": "192.168.0.1",
+				"configurationType": "dhcp",
+				"type": "config",
+				"default_gw": ""
+			}
+		]
+	}
+}

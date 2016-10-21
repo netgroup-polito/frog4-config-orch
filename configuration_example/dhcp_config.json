@@ -2,13 +2,13 @@
 	"config-dhcp-server:server":{
 		"globalIpPool": {
 			"gatewayIp":{
-				"gatewayIp": "10.168.0.1",
+				"gatewayIp": "192.168.0.1",
 				"gatewayMask": "255.255.255.0"
 			},
 			"sections": {
 				"section": [{
-					"sectionStartIp": "10.168.0.50",
-					"sectionEndIp": "10.168.0.253"
+					"sectionStartIp": "192.168.0.50",
+					"sectionEndIp": "192.168.0.253"
 				}]
 			},
 			"defaultLeaseTime": "100",
@@ -25,7 +25,15 @@
 			"configurationType": "static",
 			"type": "dhcp",
 			"default_gw": "192.168.0.1"
-		}]
+		},
+		{
+				"name": "eth0",
+				"address": "192.168.0.1",
+				"configurationType": "dhcp",
+				"type": "config",
+				"default_gw": ""
+			}
+		]
 	}
 
 
