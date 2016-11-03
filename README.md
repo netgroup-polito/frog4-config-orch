@@ -2,7 +2,7 @@
 
 This project aims to provide orchestrators a VNFs (Virtual Network Function) dynamic configuration service.
 Such a configuration service is the logic core of the architecture, it pushes configurations into VNFs, retrieves and exports VNFs actual configuration states and communicates with a GUI.
-The interactions between the configuration service and the agents are performed through a message bus.
+The interactions between the configuration service and the agents are performed through a message bus on a management network.
 
 ![Architecture](https://raw.githubusercontent.com/netgroup-polito/generic-nfv-configuration-and-management/master/images/architecture.jpg)
 #How to start
