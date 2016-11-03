@@ -2,15 +2,7 @@
 Created on Dec 29, 2015
 @author: fabiomignini
 '''
-dealer = 'tcp://localhost:5555'
-openstack_ip = 'controller.ipv6.polito.it'
-nova_port = '8774'
-keystone_port = '35357'
-# Timeout in seconds
-nova_timeout = '10'
-tenant_name = 'admin'
-username = 'admin'
-password = 'SDN@Edge_Polito'
+dealer = 'tcp://localhost:5555' #double decker broker ip
 
 keyfile = '/etc/doubledecker/public-keys.json'
 
