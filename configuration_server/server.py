@@ -241,7 +241,7 @@ class ConfigurationServer(clientSafe.ClientSafe):
         for x in self.started_vnfs_by_mac_address:
             logging.debug(x)
 
-        mac = 'a.'+mac_vnf
+        mac = 'a.'+mac_vnf #The information stored into started_vnfs_by_mac_address is tenant_id.mac_vnf
         if mac in self.started_vnfs_by_mac_address:
             vnf = self.started_vnfs_by_mac_address[mac]
         else:
