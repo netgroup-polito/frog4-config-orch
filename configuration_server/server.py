@@ -209,12 +209,53 @@ class ConfigurationServer(clientSafe.ClientSafe):
             response.body = vnf.status
         else:
             response.status = falcon.HTTP_404
- 
-    def on_get(self, request, response, mac_vnf=None, user_id=None, vnf_type=None):
-        if vnf_type != None:
+
+    '''
+    Method used to retrieve generic information from a VNF status
+    '''
+    def get_param(self, request, response, mac_vnf, user_id, key_param):
+        logging.debug('get param')
+
+    '''
+    Method used in order to configure some parameters of a VNF
+    Parameter not specified are aumatically filled with a default value
+    '''
+    def set_params(self, request, response, vnf):
+        logging.debug('set param')
+        map_keys = self.read_params_list("./rest-api/key-parameters/rest-dhcp")
+        params_to_configure = self.read_request_params(request)
+        allowed_keys = map_keys.keys()
+        for key in params_to_configure.keys():
+            if key in allowed_keys:
+                logging.debug(key + " allowed")
+            else: 
+                logging.debug(key + " NOT allowed")
+
+    def read_request_params(self, request):
+        data = request.stream.read().decode()
+        list_params = {}
+        for line in data.split('\n'):
+            key = line.split(' ')[0]
+            value = line.split(' ')[1]
+            list_params[key] = value
+        return list_params
+
+    def read_params_list(self, path):
+        f = open(path, "r")
+        map_keys = {}
+        for line in f:
+            key = line.split(' ')[0]
+            value = line.split(' ')[1]
+            map_keys[key] = value
+        return map_keys
+
+    def on_get(self, request, response, mac_vnf=None, user_id=None, vnf_type=None, key_param=None):
+        if vnf_type != None and key_param == None:
             self.get_yang(request, response, vnf_type)
-        elif mac_vnf != None and user_id != None and vnf_type == None:
+        elif mac_vnf != None and user_id != None and vnf_type == None and key_param == None:
             self.get_staus_vnf(request,response, mac_vnf, user_id)
+        elif key_param != None and mac_vnf != None and user_id != None and vnf_type == None:
+            self.get_param(request, response, mac_vnf, user_id, key_param)
 
     #def on_put(self, request, response, image_id):
         #'''
@@ -237,19 +278,24 @@ class ConfigurationServer(clientSafe.ClientSafe):
         '''
         Method called by the dashboard to configure a VNF
         '''
-        logging.debug('MAC VNF: ')
-        for x in self.started_vnfs_by_mac_address:
-            logging.debug(x)
+        if mac_vnf != None and user_id != None:
+            logging.debug('MAC VNF: ')
+            for x in self.started_vnfs_by_mac_address:
+                logging.debug(x)
 
-        mac = 'a.'+mac_vnf #The information stored into started_vnfs_by_mac_address is tenant_id.mac_vnf
-        if mac in self.started_vnfs_by_mac_address:
-            vnf = self.started_vnfs_by_mac_address[mac]
-        else:
-            response.status = falcon.HTTP_404
-            return
-        configuration_json = json.loads(request.stream.read().decode())
-        #NON DA SCOMMENTARE#self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
-        self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+            mac = 'a.'+mac_vnf #The information stored into started_vnfs_by_mac_address is tenant_id.mac_vnf
+            if mac in self.started_vnfs_by_mac_address:
+                vnf = self.started_vnfs_by_mac_address[mac]
+            else:
+                response.status = falcon.HTTP_404
+                vnf='ciao' #da eliminare
+                #return
+        
+            #configuration_json = json.loads(request.stream.read().decode())
+            #NON DA SCOMMENTARE#self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
+            #self.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+
+            self.set_params(request, response, vnf)
 
     def on_error():
         pass

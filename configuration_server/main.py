@@ -16,6 +16,7 @@ conf_server = ConfigurationServer()
 app = falcon.API()
 app.add_route('/status/{vnf_type}', conf_server)
 app.add_route('/configure/{mac_vnf}/user/{user_id}', conf_server)
+app.add_route('/get-information-from/{mac_vnf}/user/{user_id}/param/{key_param}', conf_server)
 logging.info("Falcon Successfully started")
 
 working_thread = Thread(target=conf_server.start_configuration_server)
