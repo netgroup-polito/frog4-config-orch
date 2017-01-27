@@ -8,19 +8,13 @@ import json
 from configuration_service_core.my_db import get_default_configuration
 from configuration_service_core.log import print_log
 from configparser import SafeConfigParser
-import time
 
 
 class MessageBus(clientSafe.ClientSafe):
-    _instance = None
     _working_thread = None
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(MessageBus, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
+        print_log('init bus')
         self.parser = SafeConfigParser()
         self.confFile = "config/default-config.ini"
         self.parser.read(self.confFile)
@@ -31,10 +25,10 @@ class MessageBus(clientSafe.ClientSafe):
         self.working_thread = None
         self.vnf_to_configure = {}
         self.initial_registration()
-        self._working_thread.join()
+        #self._working_thread.join()
 
     def registration(self, name, dealerurl, customer, keyfile):
-        super(MessageBus, self).__init__(name=name.encode('utf8'), dealerurl=dealerurl, customer=customer.encode('utf8'), keyfile=keyfile)
+        super().__init__(name=name.encode('utf8'), dealerurl=dealerurl, customer=customer.encode('utf8'), keyfile=keyfile)
         if self._working_thread is None:
             self._working_thread = Thread(target=self.start)
             self._working_thread.start()
@@ -81,6 +75,10 @@ class MessageBus(clientSafe.ClientSafe):
         print_log(src)
         print_log(topic)
         print_log(msg)
+        if topic =='public.vnf_registration':
+            tenant = src.split('.')[0]
+            print_log("tenant: " + tenant)
+
         if topic == 'public.tenant_association':
             # Retrieve tenant id from the mac_address of the VM
             vnf = VNF(mac_address=src)
@@ -137,3 +135,7 @@ class MessageBus(clientSafe.ClientSafe):
 
     def on_error(self):
         pass
+
+
+def message_bus_singleton_factory(_singleton=MessageBus()):
+    return _singleton

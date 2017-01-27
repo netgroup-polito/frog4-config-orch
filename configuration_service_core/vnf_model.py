@@ -5,7 +5,7 @@ Created on Dec 29, 2015
 '''
 import logging
 from configuration_service_core import constants
-
+from configuration_service_core.log import print_log
 
 class VNF(object):
     def __init__(self, _id = None, name = None, tenant_id = None,
@@ -18,14 +18,16 @@ class VNF(object):
 
     def get_detailed_info(self):
         if self.mac_address == "a.52:54:00:fc:92:6e":
-            logging.debug("dhcp")
+            print_log("dhcp")
             self.id = constants.id_dhcp
             self.name = constants.vnf_name_dhcp
         elif self.mac_address == "a.52:54:00:3e:28:86":
-            logging.debug("nat")
+            print_log("nat")
             self.id = constants.id_nat
             self.name = constants.vnf_name_nat
         else:
-            logging.debug("nessuna corrispondenza con mac")
+            print_log("nessuna corrispondenza con mac")
+            self.id = constants.id_dhcp
+            self.name = constants.vnf_name_dhcp
         self.tenant_id = constants.tenant_id
 

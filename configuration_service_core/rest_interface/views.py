@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from configuration_service_core import service
-
+from configuration_service_core.log import print_log
 
 #conf_server = server.ConfigurationServer()
 #conf_server.start()
@@ -21,7 +21,6 @@ class ConfigureVNF(APIView):
         :param tenant_id:
         :return:
         """
-
         status = service.configure_vnf(request, vnf_id, tenant_id, graph_id)
         return HttpResponse(status=200)
 
@@ -36,7 +35,7 @@ class RetrieveStatus(APIView):
         :param tenant_id:
         :return:
         """
-        status = service.retrieve_vnf_status(request, vnf_id, graph_id, tenant_id)
+        status = service.get_status_vnf(vnf_id, graph_id, tenant_id)
         if status == "":
             return HttpResponse(status=404)
         return Response(data=json.loads(status))
