@@ -47,8 +47,7 @@ if __name__ == "__main__":
 
         logging.info('Running \'Configuration service\' with version %s', version)
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_config.settings")
-        worker = Thread(target=messaging.MessageBus)
-        worker.start()
+        messaging.message_bus_singleton_factory()
         execute_from_command_line(params)
 
     else:

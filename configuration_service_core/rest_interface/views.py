@@ -10,6 +10,7 @@ from configuration_service_core.log import print_log
 #conf_server = server.ConfigurationServer()
 #conf_server.start()
 
+
 class ConfigureVNF(APIView):
     def put(self, request, vnf_id, graph_id, tenant_id):
 
