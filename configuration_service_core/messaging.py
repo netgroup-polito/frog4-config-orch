@@ -25,7 +25,6 @@ class MessageBus(clientSafe.ClientSafe):
         self.working_thread = None
         self.vnf_to_configure = {}
         self.initial_registration()
-        #self._working_thread.join()
 
     def registration(self, name, dealerurl, customer, keyfile):
         super().__init__(name=name.encode('utf8'), dealerurl=dealerurl, customer=customer.encode('utf8'), keyfile=keyfile)

@@ -7,44 +7,14 @@ Created on Dec 30, 2015
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from doubledecker import clientSafe
-from configuration_service_core import constants
 from configuration_service_core.vnf_model import VNF
-from configuration_service_core.my_db import get_default_configuration
-from configuration_service_core.yang_parser import yang_to_json
-
-import sys
-import logging
 import json
-#from configuration_service.configuration_server import log
 import requests
 from vnf_template_library.validator import ValidateTemplate
 from vnf_template_library.template import Template
-from vnf_template_library.exception import  TemplateValidationError
+from vnf_template_library.exception import TemplateValidationError
 from configuration_service_core.log import print_log
 from configuration_service_core.messaging import message_bus_singleton_factory
-
-'''
-    def __init__(self):
-        self.started_vnfs = []
-        self.started_vnfs_by_mac_address = {}
-        self.started_vnfs_by_id = {}
-        self.vnf_to_configure = {}
-        self.counter = 0
-        self.working_thread = None
-
-
-
-def start_configuration_server(self):
-    # Registration to the DD bus
-    self.initial_registration()
-    self.working_thread.join()
-
-
-def start(self):
-    logging.basicConfig(level=logging.DEBUG)
-    super(ConfigurationServer, self).start()
-'''
 
 
 def get_yang_from_vnf_id(vnf_id):
@@ -125,7 +95,6 @@ def configure_vnf(request, mac_vnf, user_id, graph_id):
         configuration_json = json.loads(request.stream.read().decode())
         yang = get_yang_from_vnf_id(mac_vnf)
         print_log('yang retrieved: ' + yang)
-        # NON DA SCOMMENTARE#self.sendmsg(vnf.tenant_id+'.'+vnf.mac_address, json.dumps(configuration_json))
         bus.sendmsg(vnf.mac_address, json.dumps(configuration_json))
         return True
 
