@@ -21,7 +21,7 @@ DEBUG = True
 from corsheaders.defaults import default_headers
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -87,7 +87,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-"""
+
 REST_FRAMEWORK = {
 	'DEFAULT_PARSER_CLASSES': (
 		'rest_framework.parsers.JSONParser',
@@ -95,7 +95,7 @@ REST_FRAMEWORK = {
 		'rest_framework.parsers.MultiPartParser',
 	)
 }
-"""		
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(os.path.abspath('.'), 'static')
