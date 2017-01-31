@@ -1,4 +1,4 @@
-module config-dhcp-server { 
+module dhcp { 
 	namespace "http://netgroup.ipv6.polito.it/dhcp"; 
 	prefix "dhcp";
 	import ietf-inet-types { 
@@ -75,6 +75,7 @@ module config-dhcp-server {
 				type string; 
 			} 
 			leaf address { 
+                                mandatory false;
 				description "name='IP Address'";
 				type inet:ip-address; 
 			} 
@@ -95,8 +96,9 @@ module config-dhcp-server {
 				} 
 			}
 			leaf default_gw { 
+                                mandatory false;
 				description "name='Default GW'";
-				type string; 
+				type inet:ip-address;
 			}
 		} 
 	} 
