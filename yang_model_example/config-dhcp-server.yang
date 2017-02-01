@@ -1,4 +1,4 @@
-module dhcp { 
+module config-dhcp-server { 
 	namespace "http://netgroup.ipv6.polito.it/dhcp"; 
 	prefix "dhcp";
 	import ietf-inet-types { 
