@@ -1,19 +1,16 @@
 import json
-from configparser import SafeConfigParser
-
+from rest_framework.parsers import JSONParser
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from configuration_service_core import service
-from configuration_service_core.log import print_log
-
-#conf_server = server.ConfigurationServer()
-#conf_server.start()
+from configuration_service_core.rest_interface import API
+from rest_framework.parsers import ParseError
 
 
 class ConfigureVNF(APIView):
-    def put(self, request, vnf_id, graph_id, tenant_id):
+    parser_classes = (JSONParser,)
 
+    def put(self, request, vnf_id, graph_id, tenant_id):
         """
         Send the configuration to the VNF agent
         :param request:
@@ -22,11 +19,18 @@ class ConfigureVNF(APIView):
         :param tenant_id:
         :return:
         """
-        status = service.configure_vnf(request, vnf_id, tenant_id, graph_id)
-        return HttpResponse(status=200)
+        if request.META['CONTENT_TYPE'] != 'application/json':
+            return HttpResponse(status=415)
+        data = request.stream.read()
+        if data == "":
+            raise ParseError(detail="no yang was provided")
+        status = API.configure_vnf(data.decode(), vnf_id, graph_id, tenant_id)
+        return HttpResponse(status=status)
 
 
 class RetrieveStatus(APIView):
+    parser_classes = (JSONParser,)
+
     def get(self, request, vnf_id, graph_id, tenant_id):
         """
         Retrieve the actual status of the VNF
@@ -36,23 +40,7 @@ class RetrieveStatus(APIView):
         :param tenant_id:
         :return:
         """
-        status = service.get_status_vnf(vnf_id, graph_id, tenant_id)
+        status = API.get_status_vnf(vnf_id, graph_id, tenant_id)
         if status == "":
             return HttpResponse(status=404)
         return Response(data=json.loads(status))
-
-
-class YANGModels(APIView):
-    '''
-    '''
-    def get(self, request, vnf_type):
-        """
-        Retrieve the YANG file of the vnf_type type (for the GUI)
-        :param request:
-        :param vnf_type:
-        :return:
-        """
-        yang = service.get_yang_from_vnf_id(vnf_type)
-        if yang == "":
-            return HttpResponse(status=404)
-        return Response(data=json.loads(yang))
