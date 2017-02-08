@@ -15,6 +15,18 @@ from vnf_template_library.template import Template
 from vnf_template_library.exception import TemplateValidationError
 from configuration_service_core.log import print_log
 from configuration_service_core.messaging import message_bus_singleton_factory
+from configparser import SafeConfigParser
+from configuration_service_core.pending_configuration import configuration_manager_singleton_factory
+
+config_file = "config/default-config.ini"
+parser = SafeConfigParser()
+parser.read(config_file)
+un_address = parser.get('orchestrator', 'address')
+un_port = parser.get('orchestrator', 'port')
+un_protocol = "http"
+datastore_address = parser.get('datastore', 'address')
+datastore_port = parser.get('datastore', 'port')
+datastore_protocol = "http"
 
 
 def get_yang_from_vnf_id(vnf_id):
@@ -27,9 +39,18 @@ def get_yang_from_vnf_id(vnf_id):
         :param vnf_id:
         :return:
     '''
-    print_log("get_default_configuration - id: " + vnf_id)
-    template_uri = "http://130.192.225.193:8081/v2/nf_template/provaDhcp/"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    ''' TODO: test as soon as we have the knowledge of the graph id -> data migration on DB
+    request_uri = un_protocol + '://' + un_address + ':' + un_port + '/' + 'template/' + graph_id + '/' + vnf_id + '/'
+    response = requests.get(request_uri, headers=headers)
+    if response.status_code != 200:
+        print_log("template not found")
+        return ""
+    template_path = json.load(response.content)['templateUrl']
+    template_uri = datastore_protocol + '://' + datastore_address + ':' + datastore_port + '/v2/nf_template' + template_path + '/'
+    '''
+    template_uri = "http://130.192.225.193:8081/v2/nf_template/provaDhcp/"
+
     response_template = requests.get(template_uri, headers=headers)
     print_log("template requested: " + response_template.text)
     template = Template()
@@ -69,7 +90,7 @@ def get_status_vnf(mac_vnf, user_id, graph_id):
         return ""
 
 
-def configure_vnf(request, mac_vnf, user_id, graph_id):
+def configure_vnf(configuration, mac_vnf, user_id, graph_id):
     if mac_vnf is not None and user_id is not None:
         print_log('MAC VNF: ')
         bus = message_bus_singleton_factory()
@@ -84,17 +105,31 @@ def configure_vnf(request, mac_vnf, user_id, graph_id):
             if mac not in bus.vnf_to_configure:
                 vnf = VNF()
                 vnf.mac_address = mac
-                vnf.configuration_to_push = json.loads(request.stream.read().decode())
+                vnf.configuration_to_push = json.loads(configuration)
                 bus.vnf_to_configure[mac] = vnf
                 print_log('configuration request for ' + mac + ' saved:\n' + str(vnf.configuration_to_push))
                 return True
             else:
-                bus.vnf_to_configure[mac].configuration_to_push = json.loads(request.stream.read().decode())
+                bus.vnf_to_configure[mac].configuration_to_push = json.loads(configuration)
                 return True
 
-        configuration_json = json.loads(request.stream.read().decode())
+        configuration_json = json.loads(configuration)
         yang = get_yang_from_vnf_id(mac_vnf)
         print_log('yang retrieved: ' + yang)
+        configuration_manager_singleton_factory().configuration_syn(vnf.mac_address, "graph_id", "tenant_id", configuration_json)
         bus.sendmsg(vnf.mac_address, json.dumps(configuration_json))
         return True
 
+
+def get_vnf_agent_state(vnf_id, graph_id, tenant_id):
+    '''
+    :param vnf_id:
+    :param graph_id:
+    :param tenant_id:
+    :return: True if the VNf is up, False otherwise
+    '''
+    keys = message_bus_singleton_factory().started_vnfs_by_mac_address.keys()
+    for key in keys:
+        if key.split('.')[1] == vnf_id:
+            return True
+    return False

@@ -8,11 +8,11 @@ import json
 from configuration_service_core.my_db import get_default_configuration
 from configuration_service_core.log import print_log
 from configparser import SafeConfigParser
+from configuration_service_core.pending_configuration import configuration_manager_singleton_factory
+from multiprocessing import Process
 
 
 class MessageBus(clientSafe.ClientSafe):
-    _working_thread = None
-
     def __init__(self):
         print_log('init bus')
         self.parser = SafeConfigParser()
@@ -22,14 +22,16 @@ class MessageBus(clientSafe.ClientSafe):
         self.started_vnfs_by_mac_address = {}
         self.started_vnfs_by_id = {}
         self.counter = 0
-        self.working_thread = None
+        self._working_thread = None
         self.vnf_to_configure = {}
         self.initial_registration()
+        #self._working_thread.join()
 
     def registration(self, name, dealerurl, customer, keyfile):
         super().__init__(name=name.encode('utf8'), dealerurl=dealerurl, customer=customer.encode('utf8'), keyfile=keyfile)
         if self._working_thread is None:
             self._working_thread = Thread(target=self.start)
+            #self._working_thread = Process(target=self.start)
             self._working_thread.start()
 
     def initial_registration(self):
@@ -95,8 +97,7 @@ class MessageBus(clientSafe.ClientSafe):
             if src in self.vnf_to_configure:
                 print_log('src:' + src)
                 vnf = self.vnf_to_configure[src]
-                print_log(
-                    'publishing an old configuration for ' + src + ": " + json.dumps(vnf.configuration_to_push))
+                print_log('publishing an old configuration for ' + src + ": " + json.dumps(vnf.configuration_to_push))
                 self.sendmsg(vnf.mac_address, json.dumps(vnf.configuration_to_push))
             else:
                 print_log('publishing a default configuration for: ' + src)
@@ -104,7 +105,9 @@ class MessageBus(clientSafe.ClientSafe):
                 self.sendmsg(vnf.mac_address, configuration_json)
         elif topic == 'public.status_exportation':
             # Configuration publication
+            print_log("status exportation")
             self.started_vnfs_by_mac_address[src].status = msg
+            configuration_manager_singleton_factory().configuration_ack(src.split('.')[1], "graph_id", src.split('.')[0])
             print_log("Configuration json status: " + self.started_vnfs_by_mac_address[src].status + ' of vm: ' +
                          self.started_vnfs_by_mac_address[src].name)
 
