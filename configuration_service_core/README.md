@@ -14,7 +14,7 @@ $ source .env/bin/activate
 ```sh	
 $ sudo apt-get install python3-setuptools python3-pip libffi-dev
 $ sudo pip3 install aiozmq zmq xmltodict pyang
-$ sudo pip3 install django==1.8.2 djangorestframework django-rest-swagger==0.3.5 django-chunked-upload django-cors-headers wrapt bcrypt 
+$ sudo pip3 install django==1.8.2 djangorestframework django-rest-swagger==0.3.5 mysqlclient django-chunked-upload django-cors-headers wrapt bcrypt 
 ```
 
 - Only if you are using Ubuntu 14.04
