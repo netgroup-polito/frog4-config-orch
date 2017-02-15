@@ -4,7 +4,7 @@ now = datetime.datetime.now()
 
 file="/home/davide/Documenti/frog4-datastore/configuration_service/configuration_server/output.log2"
 
-def printlog(line):
+def print_log(line):
     #with open(file, "a") as myfile:
         #myfile.write( str(now) + ": " + line)
     try:
