@@ -8,11 +8,7 @@ import time
 
 
 def get_status_vnf(vnf_id, graph_id, tenant_id):
-    service.get_status_vnf(vnf_id, graph_id, tenant_id)
-
-
-def get_yang_from_vnf_id(vnf_type):
-    service.get_yang_from_vnf_id(vnf_type)
+    return service.get_status_vnf(vnf_id, graph_id, tenant_id)
 
 
 def configure_vnf(configuration, vnf_id, graph_id, tenant_id):
