@@ -4,8 +4,9 @@
 
 - Virtual environment
 ```sh
+$ sudo apt-get install virtualenv
 $ cd [frog4-configuration-service]
-$ virtualenv .env
+$ virtualenv -p python3 .env
 $ source .env/bin/activate
 ```
 
