@@ -1,4 +1,5 @@
 from enum import Enum
+from threading import Lock
 
 
 class ConfigurationManager:
@@ -6,25 +7,34 @@ class ConfigurationManager:
         self.list_pending_configuration = []
         self.on_syn = []
         self.on_ack = []
+        self.pending_configuration_lock = Lock()
+        self.on_ack_lock = Lock()
 
     def configuration_syn(self, vnf_id, graph_id, tenant_id, configuration):
+        self.pending_configuration_lock.acquire()
         self.list_pending_configuration.append(Configuration(vnf_id=vnf_id, graph_id=graph_id, tenant_id=tenant_id, configuration=configuration))
+        self.pending_configuration_lock.release()
 
     def configuration_ack(self, vnf_id, graph_id, tenant_id):
         configuration = None
+        self.pending_configuration_lock.acquire()
         for conf in self.list_pending_configuration:
             if conf.vnf_id.split('.')[1] == vnf_id:
                 configuration = conf
                 break
         if configuration is None:
+            self.pending_configuration_lock.release()
             return
 
         self.list_pending_configuration.remove(configuration)
+        self.pending_configuration_lock.release()
+        self.on_ack_lock.acquire()
         for callback in self.on_ack:
             if callback.condition:
                 callback.functor.execute(configuration)
                 if callback.contract_type == ContractType.TEMPORARY:
                     self.on_ack.remove(callback)
+        self.on_ack_lock.release()
 
     def set_on_configuration_ack(self, condition, functor, contract_type):
         """
@@ -35,15 +45,20 @@ class ConfigurationManager:
         :param functor:
         :return:
         """
+        self.on_ack_lock.acquire()
         self.on_ack.append(CallbackInformation(condition=condition, functor=functor, contract_type=contract_type))
+        self.on_ack_lock.release()
 
     def remove_on_configuration_ack(self, condition, functor, contract_type):
+        self.on_ack_lock.acquire()
         for callback in self.on_ack:
             if isinstance(condition, type(callback.condition)) and condition.compare(callback.condition):
                 if isinstance(functor, type(callback.functor))and functor.compare(callback.functor):
                     if contract_type == callback.contract_type:
                         self.on_ack.remove(callback)
+                        self.on_ack_lock.release()
                         return
+        self.on_ack_lock.release()
 
     def set_on_configuration_syn(self, condition, functor, contract_type):
         """

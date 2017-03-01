@@ -45,6 +45,11 @@ class MessageBus(clientSafe.ClientSafe):
         self.subscribe('tenant_association', 'noscope')
         print_log('subscribed to: tenant_association')
 
+    def subscribe_for_vnf_registration(self):
+        print_log('trying to subscribe')
+        self.subscribe('vnf_registration', 'noscope')
+        print_log('subscribed to: vnf_registration')
+
     def subscribe_for_default_configuration_phase(self):
         self.subscribe('default_configuration', 'noscope')
 
@@ -76,11 +81,42 @@ class MessageBus(clientSafe.ClientSafe):
         print_log(src)
         print_log(topic)
         print_log(msg)
-        if topic =='public.vnf_registration':
-            tenant = src.split('.')[0]
-            print_log("tenant: " + tenant)
 
-        if topic == 'public.tenant_association':
+        if topic == 'public.vnf_registration':
+            print_log("vnf_registration")
+            tenant = src.split('.')[0]
+            vnf = VNF(mac_address=src)
+            for line in msg.split('\n'):
+                words = line.split(':')
+                if words[0] == "tenant-id":
+                    vnf.tenant_id = words[1]
+                elif words[0] == "vnf-name":
+                    vnf.name = words[1]
+                elif words[0] == "vnf-id":
+                    vnf.id = words[1]
+                else:
+                    print_log("unknown message key: " + words[0])
+
+            # Add this VM in the started-up
+            self.started_vnfs.append(vnf)
+            self.started_vnfs_by_mac_address[vnf.mac_address] = vnf
+            self.started_vnfs_by_id[vnf.id] = vnf
+            print_log("vnf registered (id:" + vnf.id + ", tenant:" + vnf.tenant_id + ",name:" + vnf.name)
+            self.sendmsg(vnf.mac_address, "REGISTERED " + vnf.tenant_id + '.' + vnf.id)
+            '''
+            Check if the configuration service has an initial configuration to push into the VNF
+            '''
+            if src in self.vnf_to_configure:
+                print_log('src:' + src)
+                vnf = self.vnf_to_configure[src]
+                print_log('publishing an old configuration for ' + src + ": " + json.dumps(vnf.configuration_to_push))
+                self.sendmsg(vnf.mac_address, json.dumps(vnf.configuration_to_push))
+            else:
+                configuration_json = get_default_configuration(vnf.id)
+                if configuration_json != "":
+                    print_log('publishing a default configuration for: ' + src)
+                    self.sendmsg(vnf.mac_address, configuration_json)
+        elif topic == 'public.tenant_association':
             # Retrieve tenant id from the mac_address of the VM
             vnf = VNF(mac_address=src)
             print_log("mac=" + src)
@@ -116,6 +152,8 @@ class MessageBus(clientSafe.ClientSafe):
         Callback of the registration to the bus
         '''
         print_log('registred')
+        # Subscribe to the vnf registration topic
+        self.subscribe_for_vnf_registration()
         # Subscribe to the tenant association phase
         self.subscribe_for_tenant_association_phase()
         # Subscribe to the default configuration phase
