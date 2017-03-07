@@ -17,6 +17,8 @@ from configuration_service_core.log import print_log
 from configuration_service_core.messaging import message_bus_singleton_factory
 from configparser import SafeConfigParser
 from configuration_service_core.pending_configuration import configuration_manager_singleton_factory
+import traceback
+import sys
 
 config_file = "config/default-config.ini"
 parser = SafeConfigParser()
@@ -75,7 +77,7 @@ def get_status_vnf(mac_vnf, user_id, graph_id):
     '''
     Method called by the dashboard to retrieve the status of a VNF
     '''
-    print_log('retrieve status vnf')
+    #print_log('retrieve vnf status(' + mac_vnf + ')')
     bus = message_bus_singleton_factory()
     mac = 'a.' + mac_vnf
     if mac in bus.started_vnfs_by_mac_address:
@@ -83,8 +85,8 @@ def get_status_vnf(mac_vnf, user_id, graph_id):
     else:
         return ""
     if vnf.status is not None:
-        print_log("vnf name: " + vnf.name)
-        print_log("vnf status: " + vnf.status)
+        #print_log("vnf name: " + vnf.name)
+        #print_log("vnf status: " + vnf.status)
         return vnf.status
     else:
         return ""
@@ -92,11 +94,11 @@ def get_status_vnf(mac_vnf, user_id, graph_id):
 
 def configure_vnf(configuration, mac_vnf, user_id, graph_id):
     if mac_vnf is not None and user_id is not None:
-        print_log('MAC VNF: ')
+        #print_log('MAC VNF: ')
         bus = message_bus_singleton_factory()
-        print_log('Message bus retrieved')
-        for x in bus.started_vnfs_by_mac_address:
-            print_log(x)
+        #print_log('Message bus retrieved')
+        #for x in bus.started_vnfs_by_mac_address:
+            #print_log(x)
 
         mac = 'a.' + mac_vnf  # The information stored into started_vnfs_by_mac_address is tenant_id.mac_vnf
         if mac in bus.started_vnfs_by_mac_address:
@@ -117,7 +119,13 @@ def configure_vnf(configuration, mac_vnf, user_id, graph_id):
         yang = get_yang_from_vnf_id(mac_vnf)
         print_log('yang retrieved: ' + yang)
         configuration_manager_singleton_factory().configuration_syn(vnf.mac_address, "graph_id", "tenant_id", configuration_json)
-        bus.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+        try:
+            bus.sendmsg(vnf.mac_address, json.dumps(configuration_json))
+        except Exception as e:
+            print_log("Sendmsg to " + vnf.mac_address + " failed\n")
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_tb)
+            return False
         return True
 
 
