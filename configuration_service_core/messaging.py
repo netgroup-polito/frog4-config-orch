@@ -173,8 +173,8 @@ class MessageBus(clientSafe.ClientSafe):
         self.shutdown()
         sys.exit(0)
 
-    def on_error(self):
-        pass
+    def on_error(self, code, msg):
+        logging.debug(str(code) + ": " + str(msg))
 
 
 def message_bus_singleton_factory(_singleton=MessageBus()):
