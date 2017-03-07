@@ -22,7 +22,8 @@ def configure_vnf(configuration, vnf_id, graph_id, tenant_id):
                                                                        functor=configuration_callback,
                                                                        contract_type=ContractType.TEMPORARY)
     event.clear()
-    service.configure_vnf(configuration, vnf_id, tenant_id, graph_id)
+    if not service.configure_vnf(configuration, vnf_id, tenant_id, graph_id):
+        return 503
     if not event.wait(20):
         configuration_manager_singleton_factory().remove_on_configuration_ack(condition=configuration_callback_condition,
                                                                               functor=configuration_callback,
