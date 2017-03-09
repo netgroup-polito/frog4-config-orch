@@ -81,9 +81,9 @@ module config-firewall {
 				type enumeration {
 					enum tcp;
 					enum udp;
-					enum not_defined;
+					enum icmp;
+					enum all;
 				}
-				mandatory false;
 			}
 			leaf source-port {
 				type string;
