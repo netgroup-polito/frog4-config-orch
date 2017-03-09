@@ -13,11 +13,11 @@ module config-firewall {
 	}
 
 	container interfaces { 
-		list ifEntry { 
+		list ifEntry {
 			key "name"; 
 			leaf name { 
 				type string; 
-			} 
+			}
 			leaf configurationType { 
 				type enumeration { 
 					enum dhcp; 
@@ -41,6 +41,9 @@ module config-firewall {
 			leaf policy-name {
 				type string;
 			}
+			leaf description{
+			    type string;
+			}
 			leaf action {
 				type enumeration {
 					enum drop;
@@ -51,23 +54,28 @@ module config-firewall {
 				type leafref {
 				 	path "/interfaces/ifEntry/name";
 				}
+				mandatory false;
 			}
 			leaf out-interface {
 				type leafref {
 				 	path "/interfaces/ifEntry/name";
 				}
+				mandatory false;
 			}
 			leaf source-address {
 				type inet:ip-address;
 			}
 			leaf source-mask {
 				type inet:ip-address;
+				mandatory false;
 			}
 			leaf destination-address {
 				type inet:ip-address;
+				mandatory false;
 			}
 			leaf destination-mask {
 				type inet:ip-address;
+				mandatory false;
 			}
 			leaf protocol {
 				type enumeration {
@@ -75,12 +83,15 @@ module config-firewall {
 					enum udp;
 					enum not_defined;
 				}
+				mandatory false;
 			}
 			leaf source-port {
 				type string;
+				mandatory false;
 			}
 			leaf destination-port {
 				type string;
+				mandatory false;
 			}
 		}
 	}
