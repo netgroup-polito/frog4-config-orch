@@ -47,7 +47,7 @@ module config-firewall {
 			leaf action {
 				type enumeration {
 					enum drop;
-					enum allow;
+					enum accept;
 				}
 			}
 			leaf in-interface {
