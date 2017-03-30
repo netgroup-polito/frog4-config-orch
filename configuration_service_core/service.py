@@ -19,6 +19,7 @@ from configparser import SafeConfigParser
 from configuration_service_core.pending_configuration import configuration_manager_singleton_factory
 import traceback
 import sys
+import logging
 
 config_file = "config/default-config.ini"
 parser = SafeConfigParser()
@@ -29,7 +30,7 @@ un_protocol = "http"
 datastore_address = parser.get('datastore', 'address')
 datastore_port = parser.get('datastore', 'port')
 datastore_protocol = "http"
-
+message_broker_dealer = parser.get('message_broker', 'dealer')
 
 def get_yang_from_vnf_id(vnf_id):
     '''
@@ -41,6 +42,9 @@ def get_yang_from_vnf_id(vnf_id):
         :param vnf_id:
         :return:
     '''
+
+    print_log("i'm get_yang_from_vnf_id, vnf_id: " + vnf_id)
+
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
     ''' TODO: test as soon as we have the knowledge of the graph id -> data migration on DB
     request_uri = un_protocol + '://' + un_address + ':' + un_port + '/' + 'template/' + graph_id + '/' + vnf_id + '/'
@@ -73,11 +77,14 @@ When the configuration service receive such a request, it provides the VNF statu
 '''
 
 
-def get_status_vnf(mac_vnf, user_id, graph_id):
+def get_status_vnf(mac_vnf, graph_id, user_id):
     '''
     Method called by the dashboard to retrieve the status of a VNF
     '''
     #print_log('retrieve vnf status(' + mac_vnf + ')')
+
+    print_log("i'm get_status_vnf, mac_vnf: " + mac_vnf + " graph_id: " + graph_id + " user_id: " + user_id)
+
     bus = message_bus_singleton_factory()
     mac = 'a.' + mac_vnf
     if mac in bus.started_vnfs_by_mac_address:
@@ -93,6 +100,11 @@ def get_status_vnf(mac_vnf, user_id, graph_id):
 
 
 def configure_vnf(configuration, mac_vnf, user_id, graph_id):
+
+    print_log("i'm configure_vnf, mac_vnf: " + mac_vnf + " user_id: " + user_id + " graph_id: " + graph_id)
+    print_log("Configuration: ")
+    print_log(configuration)
+
     if mac_vnf is not None and user_id is not None:
         #print_log('MAC VNF: ')
         bus = message_bus_singleton_factory()
@@ -136,8 +148,48 @@ def get_vnf_agent_state(vnf_id, graph_id, tenant_id):
     :param tenant_id:
     :return: True if the VNf is up, False otherwise
     '''
+
+    print_log("i'm get_vnf_agent_state, vnf_id: " + vnf_id + " graph_id: " + graph_id + " tenant_id: " + tenant_id)
+
     keys = message_bus_singleton_factory().started_vnfs_by_mac_address.keys()
     for key in keys:
         if key.split('.')[1] == vnf_id:
             return True
     return False
+
+
+def get_file_list(vnf_id=None, graph_id=None, tenant_id=None):
+
+    file_list = [
+        "broker-keys.json",
+        "public-keys.json",
+        "tenant-keys.json",
+        "metadata"
+    ]
+
+    return file_list
+
+
+def get_file(filename, vnf_id, graph_id, tenant_id):
+
+    if filename not in get_file_list():
+        raise Exception("file not found")
+
+    path = "datadisk/"
+
+    if(filename=="metadata"):
+        return open((_create_metadata(path, vnf_id, graph_id, tenant_id)))
+
+    return open(path + filename)
+
+def _create_metadata(path, vnf_id, graph_id, tenant_id):
+
+    filename = "metadata_" + vnf_id + '_' + graph_id + '_' + tenant_id
+
+    file = open(path + filename, "w")
+    file.write("tenant-id = " + tenant_id + '\n')
+    file.write("graph-id = " + graph_id + '\n')
+    file.write("broker-url = " + message_broker_dealer + '\n')
+    file.close()
+
+    return path + filename
