@@ -2,7 +2,7 @@ import datetime
 
 now = datetime.datetime.now()
 
-file="/home/davide/Documenti/frog4-datastore/configuration_service/configuration_server/output.log2"
+file="configuration_service_core/output.log"
 
 def print_log(line):
     #with open(file, "a") as myfile:
