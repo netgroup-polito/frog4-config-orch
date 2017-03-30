@@ -101,7 +101,7 @@ class MessageBus(clientSafe.ClientSafe):
             self.started_vnfs.append(vnf)
             self.started_vnfs_by_mac_address[vnf.mac_address] = vnf
             self.started_vnfs_by_id[vnf.id] = vnf
-            print_log("vnf registered (id:" + vnf.id + ", tenant:" + vnf.tenant_id + ",name:" + vnf.name)
+            print_log("vnf registered (id:" + vnf.id + ", tenant:" + vnf.tenant_id + ", name:" + vnf.name +")")
             self.sendmsg(vnf.mac_address, "REGISTERED " + vnf.tenant_id + '.' + vnf.id)
             '''
             Check if the configuration service has an initial configuration to push into the VNF
@@ -116,6 +116,7 @@ class MessageBus(clientSafe.ClientSafe):
                 if configuration_json != "":
                     print_log('publishing a default configuration for: ' + src)
                     self.sendmsg(vnf.mac_address, configuration_json)
+
         elif topic == 'public.tenant_association':
             # Retrieve tenant id from the mac_address of the VM
             vnf = VNF(mac_address=src)
@@ -127,6 +128,7 @@ class MessageBus(clientSafe.ClientSafe):
             self.started_vnfs.append(vnf)
             self.started_vnfs_by_mac_address[vnf.mac_address] = vnf
             self.started_vnfs_by_id[vnf.id] = vnf
+
         elif topic == 'public.default_configuration':
             print_log('default configuration request received')
             vnf = self.started_vnfs_by_mac_address[src]
@@ -139,6 +141,7 @@ class MessageBus(clientSafe.ClientSafe):
                 print_log('publishing a default configuration for: ' + src)
                 configuration_json = get_default_configuration(vnf.id)
                 self.sendmsg(vnf.mac_address, configuration_json)
+
         elif topic == 'public.status_exportation':
             # Configuration publication
             print_log("status exportation")
