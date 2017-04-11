@@ -49,11 +49,15 @@ class RetrieveStatus(APIView):
         return Response(data=json.loads(status))
 
 
-def RetrieveFileList(request, vnf_id, graph_id, tenant_id):
+def RetrieveFileList(request, tenant_id, graph_id, vnf_id):
     print_log("RetrieveFileList")
     if request.method == "GET":
         try:
-            result = service.get_file_list(vnf_id, graph_id, tenant_id)
+            result = service.get_file_list(tenant_id, graph_id, vnf_id)
+            if(len(result)==0):
+                return HttpResponse(status=204)
+        except NameError as nr:
+            return HttpResponse(status=404)
         except Exception as ex:
             print_log("[RetrieveFileList] Exception: " + str(ex))
             return HttpResponse(status=503)
@@ -64,11 +68,13 @@ def RetrieveFileList(request, vnf_id, graph_id, tenant_id):
 
 
 
-def RetrieveFile(request, filename, vnf_id, graph_id, tenant_id):
+def RetrieveFile(request, tenant_id, graph_id, vnf_id, filename):
     print_log("RetrieveFile: " + filename)
     if request.method == "GET":
         try:
-            file = service.get_file(filename, vnf_id, graph_id, tenant_id)
+            file = service.get_file(tenant_id, graph_id, vnf_id, filename)
+            if file is None:
+                return HttpResponse(status=404)
         except Exception as ex:
             print_log("[RetrieveFile] Exception: " + str(ex))
             return HttpResponse(status=204)

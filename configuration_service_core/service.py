@@ -19,7 +19,7 @@ from configparser import SafeConfigParser
 from configuration_service_core.pending_configuration import configuration_manager_singleton_factory
 import traceback
 import sys
-import logging
+from configuration_service_core import my_db
 
 config_file = "config/default-config.ini"
 parser = SafeConfigParser()
@@ -158,38 +158,36 @@ def get_vnf_agent_state(vnf_id, graph_id, tenant_id):
     return False
 
 
-def get_file_list(vnf_id=None, graph_id=None, tenant_id=None):
+def get_file_list(tenant_id=None, graph_id=None, vnf_id=None):
 
-    file_list = [
-        "broker-keys.json",
-        "public-keys.json",
-        "tenant-keys.json",
-        "metadata"
-    ]
+    if my_db.contains_vnf(vnf_id):
+        file_list = [
+            "tenant-keys.json",
+            "template.json",
+            "initial_configuration.json",
+            "metadata"
+        ]
+        return file_list
+    else:
+        raise NameError(vnf_id + "not found")
 
-    return file_list
 
 
-def get_file(filename, vnf_id, graph_id, tenant_id):
+def get_file(tenant_id, graph_id, vnf_id, filename):
 
-    if filename not in get_file_list():
-        raise Exception("file not found")
+    if(filename=="tenant-keys.json"):
+        return open(my_db.get_tenant_keys_path(tenant_id))
 
-    path = "datadisk/"
+    elif (filename == "template.json"):
+        return open(my_db.get_template_path(vnf_id))
 
-    if(filename=="metadata"):
-        return open((_create_metadata(path, vnf_id, graph_id, tenant_id)))
+    elif (filename == "initial_configuration.json"):
+        return open(my_db.get_initial_configuration_path(vnf_id))
 
-    return open(path + filename)
+    elif (filename == "metadata"):
+        return open(my_db.get_metadata_path(tenant_id, graph_id, vnf_id, message_broker_dealer))
 
-def _create_metadata(path, vnf_id, graph_id, tenant_id):
+    else:
+        return None
 
-    filename = "metadata_" + vnf_id + '_' + graph_id + '_' + tenant_id
 
-    file = open(path + filename, "w")
-    file.write("tenant-id = " + tenant_id + '\n')
-    file.write("graph-id = " + graph_id + '\n')
-    file.write("broker-url = " + message_broker_dealer + '\n')
-    file.close()
-
-    return path + filename
