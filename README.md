@@ -1,11 +1,12 @@
-#NFV dynamic configuration
+# NFV dynamic configuration
 
 This project aims to provide orchestrators a VNFs (Virtual Network Function) dynamic configuration service.
 Such a configuration service is the logic core of the architecture, it pushes configurations into VNFs, retrieves and exports VNFs actual configuration states and communicates with a GUI.
 The interactions between the configuration service and the agents are performed through a message bus on a management network.
 
 ![Architecture](https://raw.githubusercontent.com/netgroup-polito/generic-nfv-configuration-and-management/master/images/architecture.jpg)
-#How to start
+
+# How to start
 * Install Doubledecker C message broker (https://github.com/Acreo/DoubleDecker)
 * Install Configuration server (https://github.com/netgroup-polito/frog4-configuration-service/blob/refactor/configuration_service_core/README.md)
 * Create NFVs including a configuration agent (here an example of configuration-service compliant docker: https://github.com/netgroup-polito/un-orchestrator/tree/master/use-cases/configuration-service/docker/dhcp)
