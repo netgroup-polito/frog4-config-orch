@@ -14,6 +14,8 @@ def get_default_configuration(vnf_id):
     elif vnf_id == '121':
         return ""
         #return fw_config()
+    else:
+        return ""
 
 
 def dhcp_config():
@@ -76,11 +78,14 @@ def get_metadata_path(tenant_id, graph_id, vnf_id, message_broker_dealer):
     filename = "datadisk/metadata_" + tenant_id + '_' + graph_id + '_' + vnf_id
 
     file = open(filename, "w")
+
     file.write("tenant-id = " + tenant_id + '\n')
     file.write("graph-id = " + graph_id + '\n')
+    file.write("vnf-id = " + vnf_id + '\n')
     file.write("broker-url = " + message_broker_dealer + '\n')
-    file.close()
+    #file.write("vnf-name = " + vnf_id + '\n')
 
+    file.close()
 
     return filename
 
