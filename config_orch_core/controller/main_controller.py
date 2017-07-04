@@ -57,11 +57,11 @@ class MainController():
         if address is None:
             raise ManagementAddressNotFound("Management address of vnf's agent not found")
         try:
-            request_url = "http://" + address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
+            request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
             self.configurationService.get(request_url)
         except HTTPError as err:
             if err.response.status_code == 404:
-                request_url = "http://" + address + '/' + url
+                request_url = address + '/' + url
                 try:
                     return self.configurationService.get(request_url)
                 except HTTPError as err:
@@ -78,11 +78,11 @@ class MainController():
         if address is None:
             raise ManagementAddressNotFound("Management address of vnf's agent not found")
         try:
-            request_url = "http://" + address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
+            request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
             self.configurationService.put(request_url, data)
         except HTTPError as err:
             if err.response.status_code == 404:
-                request_url = "http://" + address + '/' + url
+                request_url = address + '/' + url
                 try:
                     return self.configurationService.put(request_url, data)
                 except HTTPError as err:
