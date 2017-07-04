@@ -94,3 +94,37 @@ class MainController():
 
     def delete_config(self, tenant_id, graph_id, vnf_id, url):
         pass
+
+    def put_config_workaround(self, tenant_id, graph_id, vnf_id, url, data):
+
+        config_nat = data['config-nat:nat']
+
+        try:
+            url = "config-nat/nat"
+            nat = {}
+            nat['public-interface'] = config_nat['public-interface']
+            nat['private-interface'] = config_nat['private-interface']
+            self.put_config(tenant_id, graph_id, vnf_id, url, nat)
+
+            url = "config-nat/interfaces/ifEntry"
+            interfaces = data['config-nat:interfaces']
+            ifEntries = interfaces['ifEntry']
+            for ifEntry in ifEntries:
+                id = ifEntry['id']
+                url = url + "[" + id + "]"
+                self.put_config(tenant_id, graph_id, vnf_id, url, ifEntry)
+
+
+            url = "config-nat/nat-table/nat-session"
+            nat_table = config_nat['nat-table']
+            nat_sessions = nat_table['nat-session']
+            self.put_config(tenant_id, graph_id, vnf_id, url, nat_sessions)
+
+        except ManagementAddressNotFound as ex:
+            raise ex
+        except VnfNotStarted as ex:
+            raise ex
+        except HTTPError as ex:
+            raise ex
+        except Exception as ex:
+            raise ex

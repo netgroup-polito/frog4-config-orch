@@ -61,7 +61,7 @@ class Configuration(Resource):
             url = ''
         mainController = MainController()
         try:
-            return mainController.put_config(tenant_id, graph_id, vnf_id, url, request.data.decode())
+            return mainController.put_config_workaround(tenant_id, graph_id, vnf_id, url, request.data.decode())
 
         except VnfNotStarted as err:
             return Response(json.dumps(err.get_mess()), status=404, mimetype="application/json")
