@@ -69,8 +69,6 @@ class MessageBusController():
                 logging.debug("Warning: [_handle_vnf_registration]: key: " + words[0] + "unknown, discarted")
 
         dest = src
-        self.ddClient.send_message(dest, "REGISTERED")
-        logging.debug(tenant_id+'.'+graph_id+'.'+vnf_id + " registered!")
         try:
             if not self.vnfService.is_vnf_started(tenant_id, graph_id, vnf_id):
                 self.vnfService.save_started_vnf(tenant_id, graph_id, vnf_id)
@@ -78,6 +76,9 @@ class MessageBusController():
         except IOError as ex:
             logging.debug("Error, unable to save started vnf.")
             logging.debug("exception: " + ex.message)
+        finally:
+            self.ddClient.send_message(dest, "REGISTERED")
+            logging.debug(tenant_id + '.' + graph_id + '.' + vnf_id + " registered!")
 
     def _handle_reception_of_management_address(self, topic, msg):
         triple = topic.split('/')[0]
