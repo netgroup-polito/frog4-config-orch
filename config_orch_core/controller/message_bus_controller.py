@@ -77,7 +77,8 @@ class MessageBusController():
             logging.debug("Error, unable to save started vnf.")
             logging.debug("exception: " + ex.message)
         finally:
-            self.ddClient.send_message(dest, "REGISTERED")
+            msg = "REGISTERED" + ":" + tenant_id + "/" + graph_id + "/" + vnf_id
+            self.ddClient.send_message(dest, msg)
             logging.debug(tenant_id + '.' + graph_id + '.' + vnf_id + " registered!")
 
     def _handle_reception_of_management_address(self, topic, msg):
