@@ -58,7 +58,7 @@ class MainController():
             raise ManagementAddressNotFound("Management address of vnf's agent not found")
         try:
             request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
-            self.configurationService.get(request_url)
+            return self.configurationService.get(request_url)
         except HTTPError as err:
             if err.response.status_code == 404:
                 request_url = address + '/' + url
