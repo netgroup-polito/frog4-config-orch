@@ -15,8 +15,16 @@ class ConfigurationService():
         except Exception as ex:
             raise ex
 
-    def post(self, url):
-        pass
+    def post(self, url, data):
+        headers = {'Content-type': 'application/json'}
+        try:
+            resp = requests.post(url, data=data, headers=headers)
+            resp.raise_for_status()
+            return resp.text
+        except HTTPError as err:
+            raise err
+        except Exception as ex:
+            raise ex
 
     def put(self, url, data):
         headers = {'Content-type': 'application/json'}

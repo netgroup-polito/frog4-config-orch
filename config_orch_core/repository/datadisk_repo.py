@@ -35,8 +35,8 @@ class DatadiskRepo():
         file.write('"tenant-id": "' + tenant_id + '",\n')
         file.write('"graph-id": "' + graph_id + '",\n')
         file.write('"vnf-id": "' + vnf_id + '",\n')
-        file.write('"broker-url": "tcp://10.0.0.2:5555"')
-        #file.write('"broker-url: "' + broker_address)
+        file.write('"broker-url": "tcp://192.168.200.1:5555"')
+        #file.write('"broker-url": "' + broker_address + '"')
         file.write("}")
 
         file.close()
