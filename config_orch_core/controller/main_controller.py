@@ -59,8 +59,12 @@ class MainController():
         if address is None:
             raise ManagementAddressNotFound("Management address of vnf's agent not found")
         try:
-            request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
-            self.configurationService.get(request_url)
+            if "frogsssa-1.0-SNAPSHOT" in url:
+                request_url = address + tenant_id + '/' + graph_id + '/' + vnf_id + '/'
+                return self.get_config_workaround(self, tenant_id, graph_id, vnf_id, request_url)
+            else:
+                request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
+                return self.configurationService.get(request_url)
         except HTTPError as err:
             if err.response.status_code == 404:
                 request_url = address + '/' + url
@@ -101,6 +105,49 @@ class MainController():
 
     def delete_config(self, tenant_id, graph_id, vnf_id, url):
         pass
+
+    def get_config_workaround(self, tenant_id, graph_id, vnf_id, base_url):
+
+        try:
+            config_nat_json = {}
+
+            url = "config-nat/nat"
+            config_nat = self.configurationService.get(url)
+            config_nat_json[url] = config_nat
+
+            url = "config-nat/nat/nat-table"
+            config_nat_table = self.configurationService.get(url)
+            config_nat_json[url] = config_nat_table
+
+            url = "config-nat/interfaces/ifEntry"
+            ifEntries = []
+
+            public_interface = config_nat['public-interface']
+            url = base_url + url+"["+public_interface+"]"
+            ifEntries.append(self.configurationService.get(url))
+
+            private_interface = config_nat['private-interface']
+            url = base_url + url+"[" + private_interface + "]"
+            ifEntries.append(self.configurationService.get(url))
+
+            config_nat_json[url] = ifEntries
+
+            return config_nat_json
+
+
+        except ManagementAddressNotFound as ex:
+            logging.debug(ex.get_mess())
+            raise ex
+        except VnfNotStarted as ex:
+            logging.debug(ex.get_mess())
+            raise ex
+        except HTTPError as ex:
+            logging.debug(str(ex))
+            raise ex
+        except Exception as ex:
+            logging.debug(str(ex))
+            raise ex
+
 
     def put_config_workaround(self, tenant_id, graph_id, vnf_id, url, data):
 
