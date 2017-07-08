@@ -59,17 +59,21 @@ class MainController():
         if address is None:
             raise ManagementAddressNotFound("Management address of vnf's agent not found")
         try:
-            if "frogsssa-1.0-SNAPSHOT" in url:
+            if "frogsssa-1.0-SNAPSHOT" in address:
                 request_url = address + tenant_id + '/' + graph_id + '/' + vnf_id + '/'
-                return self.get_config_workaround(self, tenant_id, graph_id, vnf_id, request_url)
+                return self.get_config_workaround(tenant_id, graph_id, vnf_id, request_url)
             else:
                 request_url = address + '/' + tenant_id + '/' + graph_id + '/' + vnf_id + '/' + url
                 return self.configurationService.get(request_url)
         except HTTPError as err:
             if err.response.status_code == 404:
-                request_url = address + '/' + url
                 try:
-                    return self.configurationService.get(request_url)
+                    if "frogsssa-1.0-SNAPSHOT" in address:
+                        request_url = address + tenant_id + '/' + graph_id + '/' + vnf_id + '/'
+                        return self.get_config_workaround(tenant_id, graph_id, vnf_id, request_url)
+                    else:
+                        request_url = address + '/' + url
+                        return self.configurationService.get(request_url)
                 except HTTPError as err:
                     raise err
             else:
@@ -112,26 +116,25 @@ class MainController():
             config_nat_json = {}
 
             url = "config-nat/nat"
-            config_nat = self.configurationService.get(url)
-            config_nat_json[url] = config_nat
-
-            url = "config-nat/nat/nat-table"
-            config_nat_table = self.configurationService.get(url)
-            config_nat_json[url] = config_nat_table
+            request_url = base_url + url
+            config_nat = self.configurationService.get(request_url)
+            config_nat_json["config-nat:nat"] = config_nat
 
             url = "config-nat/interfaces/ifEntry"
             ifEntries = []
 
-            public_interface = config_nat['public-interface']
-            url = base_url + url+"["+public_interface+"]"
-            ifEntries.append(self.configurationService.get(url))
+            public_interface = json.dumps(config_nat['public-interface'])
+            request_url = base_url + url+"["+public_interface+"]"
+            ifEntries.append(self.configurationService.get(request_url))
 
-            private_interface = config_nat['private-interface']
-            url = base_url + url+"[" + private_interface + "]"
-            ifEntries.append(self.configurationService.get(url))
+            private_interface = json.dumps(config_nat['private-interface'])
+            request_url = base_url + url+"[" + private_interface + "]"
+            ifEntries.append(self.configurationService.get(request_url))
 
-            config_nat_json[url] = ifEntries
+            config_nat_json["config-nat:interfaces"] = {}
+            config_nat_json["config-nat:interfaces"]["ifEntry"] = ifEntries
 
+            logging.debug(config_nat_json)
             return config_nat_json
 
 
