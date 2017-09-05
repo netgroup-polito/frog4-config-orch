@@ -1,0 +1,40 @@
+{
+  "CPUrequirements": {
+    "platformType": "x86",
+    "socket": [
+      {
+        "coreNumbers": 1
+      }
+    ]
+  },
+  "ephemeral-file-system-size": 0,
+  "name": "configurable_iperf",
+  "functional-capability": "iperf_docker",
+  "memory-size": 2048,
+  "vnf-type": "docker",
+  "uri-yang": "http://127.0.0.1:8081/yang/config_iperf/",
+  "uri-image-type": "docker-registry",
+  "swap-disk-size": 0,
+  "expandable": false,
+  "ports": [
+    {
+      "name": "eth",
+      "min": "1",
+      "label": "management",
+      "ipv4-config": "none",
+      "position": "0-0",
+      "ipv6-config": "none"
+    },
+    {
+      "name": "eth",
+      "min": "1",
+      "label": "L3Port",
+      "ipv4-config": "none",
+      "position": "1-2",
+      "technology": "vhost",
+      "ipv6-config": "none"
+    }
+  ],
+  "root-file-system-size": 40,
+  "uri-image": "iperf_config"
+}

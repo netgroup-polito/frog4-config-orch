@@ -1,0 +1,17 @@
+{
+	"config-iperf:interfaces": {
+		"ifEntry": [
+			{
+				"id": "L3Port:0",
+				"name": "eth0",
+				"type": "L3",
+				"management": true,
+				"ipv4_configuration": {
+					"configurationType": "dhcp"
+				}
+			}
+		]
+	},
+	"config-iperf:iperf": {
+	}
+}
