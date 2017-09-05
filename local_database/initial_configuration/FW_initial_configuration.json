@@ -1,17 +1,24 @@
 {
 	"config-firewall:interfaces": {
 		"ifEntry": [	
-			{ 
-			"name": "eth0",
-			"management": true,
-			"ipv4_configuration": {
-				"configurationType": "dhcp"
-			}},
 			{
-			"name": "eth1"
+				"id": "L3Port:0",
+				"name": "eth0",
+				"type": "L3",
+				"management": true,
+				"ipv4_configuration": {
+					"configurationType": "dhcp"
+				}
 			},
 			{
-			"name": "eth2"
+				"id": "L2Port:1",
+				"name": "eth1",
+				"type": "transparent"
+			},
+			{
+				"id": "L2Port:2",
+				"name": "eth2",
+				"type": "transparent"
 			}
 		]
 	},
@@ -83,10 +90,10 @@
 		],
 		"blacklist" : [
 			{
-				"uri": "www.wikipedia.com"
+				"url": "www.wikipedia.com"
 			},
 			{
-				"uri": "www.youtube.com"
+				"url": "www.youtube.com"
 			}
 		],
 		"whitelist" : []

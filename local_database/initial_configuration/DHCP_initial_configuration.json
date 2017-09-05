@@ -1,26 +1,20 @@
 {
 	"config-dhcp-server:server": {
-		"globalIpPool": {
-			"gatewayIp": {
-				"gatewayAddress": "192.168.0.1",
-				"gatewayMask": "255.255.255.0"
-			},
-			"sections": [{
-				"sectionStartIp": "192.168.0.50",
-				"sectionEndIp": "192.168.0.253"
-			}],
-			"defaultLeaseTime": "100",
-			"maxLeaseTime": "1000",
-			"dns": {
-				"primaryServer": "8.8.8.8",
-				"domainName": "polito.it"
-			}
-
-		},
-		"clients": []
+		"defaultLeaseTime": "100",
+		"maxLeaseTime": "1000",
+		"subnet" : "192.168.0.0",
+		"subnetMask" : "255.255.255.0",
+		"router": "192.168.0.1",
+		"dnsPrimaryServer" : "8.8.8.8",
+		"dnsDomainName": "polito.it",
+		"sections": [{
+			"sectionStartIp": "192.168.0.50",
+			"sectionEndIp": "192.168.0.253"
+		}]
 	},
 	"config-dhcp-server:interfaces": {
 		"ifEntry": [{
+				"id": "L3Port:0",
 				"name": "eth0",
 				"type": "L3",
 				"ipv4_configuration": {
@@ -29,6 +23,7 @@
 				"management": true
 			},
 			{
+				"id": "L3Port:1",
 				"name": "eth1",
 				"type": "L3",
 				"ipv4_configuration": {

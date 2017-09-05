@@ -7,12 +7,15 @@
       }
     ]
   },
-  
+  "ephemeral-file-system-size": 0,
   "name": "configurable_nat",
-  "functional-capability": "nat_docker",
+  "functional-capability": "nat",
   "memory-size": 2048,
   "vnf-type": "docker",
-  "uri-yang": "http://130.192.225.179:8081/yang/nat_cfg/",
+  "uri-yang": "http://127.0.0.1:8081/yang/config_nat/",
+  "uri-image-type": "docker-registry",
+  "swap-disk-size": 0,
+  "expandable": false,
   "ports": [
     {
       "name": "eth",
@@ -25,16 +28,12 @@
     {
       "name": "eth",
       "min": "1",
-      "label": "L2Port",
+      "label": "L3Port",
       "ipv4-config": "none",
-      "position": "1-10",
+      "position": "1-3",
       "ipv6-config": "none"
     }
   ],
-  "uri-image-type": "docker-registry",
-  "swap-disk-size": 0,
-  "expandable": false,
-  "ephemeral-file-system-size": 0,
   "root-file-system-size": 40,
   "uri-image": "nat_config"
 }
