@@ -7,7 +7,7 @@ local_db_path = "local_database"
 class DatadiskRepo():
 
     def get_file_list(self, functional_capability):
-        supported_functional_capabilities = ['nat', 'firewall', 'dhcp', 'iperf', 'traffic_shaper']
+        supported_functional_capabilities = ['nat', 'firewall', 'dhcp', 'iperf', 'iperf_client', 'iperf_server', 'traffic_shaper']
         if functional_capability not in supported_functional_capabilities:
             raise FunctionalCapabilityNotFound("Functional capability " + functional_capability + " unsupported")
         else:
@@ -63,6 +63,10 @@ class DatadiskRepo():
 
         elif (functional_capability == "iperf"):
             return local_db_path+"/initial_configuration/IPERF_initial_configuration.json"
+        elif (functional_capability == "iperf_client"):
+            return local_db_path+"/initial_configuration/IPERF_CLIENT_initial_configuration.json"
+        elif (functional_capability == "iperf_server"):
+            return local_db_path+"/initial_configuration/IPERF_SERVER_initial_configuration.json"
 
         else:
             raise FunctionalCapabilityNotFound("Functional capability " + functional_capability + " unknown")
@@ -81,7 +85,7 @@ class DatadiskRepo():
         elif (functional_capability == "traffic_shaper"):
             return local_db_path + "/templates/TRAFFIC_SHAPER_template.json"
 
-        elif (functional_capability == "iperf"):
+        elif (functional_capability == "iperf" or functional_capability == "iperf_client" or functional_capability == "iperf_server"):
             return local_db_path + "/templates/IPERF_template.json"
 
         else:

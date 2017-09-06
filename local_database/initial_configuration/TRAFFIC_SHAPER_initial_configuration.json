@@ -16,7 +16,8 @@
 				"type": "L3",
 				"ipv4_configuration": {
 					"configurationType": "static",
-					"address": "10.0.0.2"
+					"address": "20.0.0.2",
+					"netmask": "255.255.255.0"
 				}
 			},
 			{
@@ -25,7 +26,8 @@
 				"type": "L3",
 				"ipv4_configuration": {
 					"configurationType": "static",
-					"address": "10.0.1.1"
+					"address": "20.0.1.1",
+					"netmask": "255.255.255.0"
 				}
 			}
 		]

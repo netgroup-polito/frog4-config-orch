@@ -1,0 +1,11 @@
+{
+	"configuration-functions:interface_management": {
+		"name": "eth0",
+		"ipv4_configuration": {
+			"configurationType": "dhcp"
+		}
+	},
+
+	"configuration-functions:nfs": {
+	}
+}

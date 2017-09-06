@@ -1,0 +1,28 @@
+{
+	"config-iperf:interfaces": {
+		"ifEntry": [
+			{
+				"id": "L3Port:0",
+				"name": "eth0",
+				"type": "L3",
+				"management": true,
+				"ipv4_configuration": {
+					"configurationType": "dhcp"
+				}
+			},
+			{
+				"id": "L3Port:1",
+				"name": "eth1",
+				"type": "L3",
+				"ipv4_configuration": {
+					"configurationType": "static",
+					"address": "20.0.0.1",
+					"netmask": "255.255.255.0",
+					"default_gw": "20.0.0.2"
+				}
+			}
+		]
+	},
+	"config-iperf:iperf": {
+	}
+}
