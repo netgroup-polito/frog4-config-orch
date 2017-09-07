@@ -36,6 +36,13 @@ class VnfService():
         except IOError:
             raise IOError
 
+    def replace_management_address(self, tenant_id, graph_id, vnf_id, old_address, new_address):
+        vnf = VNF(tenant_id, graph_id, vnf_id)
+        try:
+            self.vnf_repo.replace_management_address(vnf, old_address, new_address)
+        except IOError:
+            raise IOError
+
     def get_management_address(self, tenant_id, graph_id, vnf_id):
         vnf = VNF(tenant_id, graph_id, vnf_id)
         try:

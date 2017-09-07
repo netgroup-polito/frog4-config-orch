@@ -56,6 +56,15 @@ class VnfRepo():
         except Exception:
             raise Exception
 
+    def replace_management_address(self, vnf, old_address, new_address):
+        try:
+            for line in fileinput.input(database, inplace=1):
+                old_row = vnf.tenant_id+':'+vnf.graph_id+':'+vnf.vnf_id+'#'+old_address
+                new_row = vnf.tenant_id+':'+vnf.graph_id+':'+vnf.vnf_id+'#'+new_address
+                print(line.replace(old_row, new_row))
+        except Exception:
+            raise Exception
+
     def get_management_address(self, vnf):
         try:
             rows = self._read_file()

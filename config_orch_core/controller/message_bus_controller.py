@@ -94,6 +94,9 @@ class MessageBusController():
                 if address is None:
                     self.vnfService.save_management_address(tenant_id, graph_id, vnf_id, msg)
                     logging.debug("Saved management address: " + msg + " of: " + tenant_id+'.'+graph_id+'.'+vnf_id )
+                else:
+                    self.vnfService.replace_management_address(tenant_id, graph_id, vnf_id, address, msg)
+                    logging.debug("Replaced management address: " + msg + " of: " + tenant_id + '.' + graph_id + '.' + vnf_id)
             else:
                 logging.error("Recevied a management address from a vnf not known:")
                 logging.error("Address: " + topic[1] + " From: tenant_id: " + tenant_id + ", graph_id: " + graph_id + ", vnf_id: " + vnf_id)
