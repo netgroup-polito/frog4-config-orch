@@ -40,65 +40,45 @@ class MessageBusController():
 
     def on_pub_callback(self, src, topic, msg):
         logging.debug("ON_PUB: src: " + src + " topic: " + topic + " msg: " + msg)
-        if topic.__eq__('public.vnf_registration'):
-            self._handle_vnf_registration(src, msg)
-        elif topic.split('/')[1].__eq__("restServer"):
-            self._handle_reception_of_management_address(topic, msg)
-
+        if topic.__eq__('public.hello'):
+            self._handle_hello_message(src, msg)
 
     def on_reg_callback(self):
         self.is_registered_to_bus = True
         self.registered_to_bus.set()
 
-    def _handle_vnf_registration(self, src, msg):
+    def _handle_hello_message(self, src, msg):
 
         tenant_id = None
         graph_id = None
         vnf_id = None
+        rest_address = None
 
         lines = msg.split('\n')
         for line in lines:
-            words = line.split(':')
-            if words[0] == "tenant-id":
-                tenant_id = words[1]
-            elif words[0] == "graph-id":
-                graph_id = words[1]
-            elif words[0] == "vnf-id":
-                vnf_id = words[1]
+            args = line.split(':')
+            if args[0] == "tenant-id":
+                tenant_id = args[1]
+            elif args[0] == "graph-id":
+                graph_id = args[1]
+            elif args[0] == "vnf-id":
+                vnf_id = args[1]
+            elif args[0] == "rest-address":
+                rest_address = args[1]
             else:
-                logging.debug("Warning: [_handle_vnf_registration]: key: " + words[0] + "unknown, discarted")
+                logging.debug("Warning: [_handle_vnf_registration]: key: " + args[0] + "unknown, discarted")
 
         dest = src
         try:
             if not self.vnfService.is_vnf_started(tenant_id, graph_id, vnf_id):
-                self.vnfService.save_started_vnf(tenant_id, graph_id, vnf_id)
-                self.ddClient.subscribe(tenant_id+'.'+graph_id+'.'+vnf_id+"/restServer", 'noscope')
-        except IOError as ex:
-            logging.debug("Error, unable to save started vnf.")
-            logging.debug("exception: " + ex.message)
-        finally:
-            msg = "REGISTERED" + ":" + tenant_id + "/" + graph_id + "/" + vnf_id
-            self.ddClient.send_message(dest, msg)
-            logging.debug(tenant_id + '.' + graph_id + '.' + vnf_id + " registered!")
-
-    def _handle_reception_of_management_address(self, topic, msg):
-        triple = topic.split('/')[0]
-        values = triple.split('.')
-        # values[0]=public
-        tenant_id = values[1]
-        graph_id = values[2]
-        vnf_id = values[3]
-        try:
-            if self.vnfService.is_vnf_started(tenant_id, graph_id, vnf_id):
-                address = self.vnfService.get_management_address(tenant_id, graph_id, vnf_id)
-                if address is None:
-                    self.vnfService.save_management_address(tenant_id, graph_id, vnf_id, msg)
-                    logging.debug("Saved management address: " + msg + " of: " + tenant_id+'.'+graph_id+'.'+vnf_id )
-                else:
-                    self.vnfService.replace_management_address(tenant_id, graph_id, vnf_id, address, msg)
-                    logging.debug("Replaced management address: " + msg + " of: " + tenant_id + '.' + graph_id + '.' + vnf_id)
+                self.vnfService.save_started_vnf(tenant_id, graph_id, vnf_id, rest_address)
+                msg = "REGISTERED" + ":" + tenant_id + "/" + graph_id + "/" + vnf_id
+                self.ddClient.send_message(dest, msg)
+                logging.debug(tenant_id + '.' + graph_id + '.' + vnf_id + " registered! Rest Address: " + rest_address)
             else:
-                logging.error("Recevied a management address from a vnf not known:")
-                logging.error("Address: " + topic[1] + " From: tenant_id: " + tenant_id + ", graph_id: " + graph_id + ", vnf_id: " + vnf_id)
-        except IOError as err:
-            logging.error(err)
+                curr_rest_address = self.vnfService.get_management_address(tenant_id, graph_id, vnf_id)
+                if curr_rest_address != rest_address:
+                    self.vnfService.replace_management_address(tenant_id, graph_id, vnf_id, curr_rest_address, rest_address)
+                    logging.debug("Replaced management address: " + rest_address + " of: " + tenant_id + '.' + graph_id + '.' + vnf_id)
+        except IOError as ex:
+            logging.debug("exception: " + ex.message)
