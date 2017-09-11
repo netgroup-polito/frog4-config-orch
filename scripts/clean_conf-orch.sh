@@ -1,5 +1,5 @@
 #!/bin/bash
 
-> ../my_db.txt
+sudo rm ../my_db.txt
 
-cd ../local_database/metadata/ && rm metadata_*
+cd ../local_database/metadata/ && sudo rm metadata_*
