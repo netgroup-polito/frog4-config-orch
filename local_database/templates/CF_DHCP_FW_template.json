@@ -8,11 +8,11 @@
     ]
   },
   "ephemeral-file-system-size": 0,
-  "name": "configurable_firewall",
-  "functional-capability": "firewall_docker",
+  "name": "cf_dhcp-fw",
+  "functional-capability": "cf_dhcp-fw",
   "memory-size": 2048,
   "vnf-type": "docker",
-  "uri-yang": "http://127.0.0.1:8081/yang/config_firewall/",
+  "uri-yang": "http://127.0.0.1:8081/yang/cf_dhcp-fw/",
   "uri-image-type": "docker-registry",
   "swap-disk-size": 0,
   "expandable": false,
@@ -22,18 +22,10 @@
       "min": "1",
       "label": "management",
       "ipv4-config": "none",
-      "position": "0-0",
-      "ipv6-config": "none"
-    },
-    {
-      "name": "eth",
-      "min": "1",
-      "label": "L2Port",
-      "ipv4-config": "none",
-      "position": "1-3",
+      "position": "0-1",
       "ipv6-config": "none"
     }
   ],
   "root-file-system-size": 40,
-  "uri-image": "firewall_config"
+  "uri-image": "dhcp-firewall_image"
 }

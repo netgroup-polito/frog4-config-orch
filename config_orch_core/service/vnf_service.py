@@ -22,8 +22,8 @@ class VnfService():
         except IOError:
             raise IOError
 
-    def save_started_vnf(self, tenant_id, graph_id, vnf_id):
-        vnf = VNF(tenant_id, graph_id, vnf_id)
+    def save_started_vnf(self, tenant_id, graph_id, vnf_id, rest_address):
+        vnf = VNF(tenant_id, graph_id, vnf_id, rest_address)
         try:
             self.vnf_repo.save_started_vnf(vnf)
         except IOError:

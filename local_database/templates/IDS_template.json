@@ -8,11 +8,11 @@
     ]
   },
   "ephemeral-file-system-size": 0,
-  "name": "configurable_firewall",
-  "functional-capability": "firewall_docker",
+  "name": "configurable_ids",
+  "functional-capability": "ids",
   "memory-size": 2048,
   "vnf-type": "docker",
-  "uri-yang": "http://127.0.0.1:8081/yang/config_firewall/",
+  "uri-yang": "http://127.0.0.1:8081/yang/config_ids/",
   "uri-image-type": "docker-registry",
   "swap-disk-size": 0,
   "expandable": false,
@@ -35,5 +35,5 @@
     }
   ],
   "root-file-system-size": 40,
-  "uri-image": "firewall_config"
+  "uri-image": "ids_config"
 }

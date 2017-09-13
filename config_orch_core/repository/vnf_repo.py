@@ -41,7 +41,7 @@ class VnfRepo():
     def save_started_vnf(self, vnf):
         try:
             with open(database, 'a') as my_db:
-                line = vnf.tenant_id+':'+vnf.graph_id+':'+vnf.vnf_id
+                line = vnf.tenant_id+':'+vnf.graph_id+':'+vnf.vnf_id+'#'+vnf.address
                 my_db.write(line+'\n')
             my_db.close()
         except Exception as e:
