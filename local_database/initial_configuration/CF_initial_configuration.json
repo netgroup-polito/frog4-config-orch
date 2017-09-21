@@ -4,8 +4,5 @@
 		"ipv4_configuration": {
 			"configurationType": "dhcp"
 		}
-	},
-
-	"configuration-functions:nfs": {
 	}
 }
