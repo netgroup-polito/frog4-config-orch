@@ -54,19 +54,11 @@ class MessageBusController():
         vnf_id = None
         rest_address = None
 
-        lines = msg.split('\n')
-        for line in lines:
-            args = line.split(' ')
-            if args[0] == "tenant-id":
-                tenant_id = args[1]
-            elif args[0] == "graph-id":
-                graph_id = args[1]
-            elif args[0] == "vnf-id":
-                vnf_id = args[1]
-            elif args[0] == "rest-address":
-                rest_address = args[1]
-            else:
-                logging.debug("Warning: [_handle_vnf_registration]: key: " + args[0] + " unknown, discarted")
+        data = json.loads(msg)
+        tenant_id = data['tenant-id']
+        graph_id = data['graph-id']
+        vnf_id = data['vnf-id']
+        rest_address = data['rest-address']
 
         dest = src
         try:
